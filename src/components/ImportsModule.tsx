@@ -13,14 +13,14 @@ const ImportsModule = () => {
     if (!selectedFile) return alert("Please select a file first.");
 
     const text = await selectedFile.text();
-    const lines = text.split('\\n');
+    const lines = text.split('\n');
     const jobEntries: any[] = [];
 
     lines.forEach(line => {
-      const jobMatch = line.match(/Job #:\\s*(\\d+)/);
-      const markMatch = line.match(/Mark\\s*:\\s*(\\S+)/);
-      const hoursMatch = line.match(/(\\d+\\.\\d{2})$/);
-      const empMatch = line.match(/\\s([a-zA-Z0-9]+)\\d{1,2}\\/\\d{1,2}\\/\\d{4}/);
+      const jobMatch = line.match(/Job\s+#:\s*(\d+)/);
+      const markMatch = line.match(/\sMark\s+(\S+)/);
+      const hoursMatch = line.match(/(\d+\.\d{2})$/);
+      const empMatch = line.match(/\s([a-zA-Z0-9]+)\s+\d{1,2}\/\d{1,2}\/\d{4}/);
 
       if (jobMatch && markMatch && hoursMatch && empMatch) {
         jobEntries.push({
@@ -65,3 +65,4 @@ const ImportsModule = () => {
 };
 
 export default ImportsModule;
+
