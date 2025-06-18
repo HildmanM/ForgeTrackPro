@@ -20,14 +20,12 @@ async function parseTeklaPDF(filePath) {
     let mark = '';
     for (let line of lines) {
         line = line.trim();
-        // Extract job and mark numbers
         if (line.startsWith('Job #:')) {
             const jobMatch = line.match(/Job #:\s*(\d+)/);
             const markMatch = line.match(/Mark\s*:\s*(\S+)/);
             job = jobMatch ? jobMatch[1] : '';
             mark = markMatch ? markMatch[1] : '';
         }
-        // Look for lines like: Python 1234 NAME 4/3/2024 3.25
         if (line.match(/(Python|Dragon|Master)/i) && line.match(/\d{1,2}\/\d{1,2}\/\d{4}/)) {
             const stationMatch = line.match(/^(.*?)\s+\d+\s+/);
             const empMatch = line.match(/\s([a-zA-Z0-9]+)\d{1,2}\/\d{1,2}\/\d{4}/);
@@ -43,7 +41,6 @@ async function parseTeklaPDF(filePath) {
             }
         }
     }
-    // Clean up the uploaded file after parsing
     fs_1.default.unlinkSync(filePath);
     return results;
 }

@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "outDir": "build"
   },
-  "include": ["index.ts", "utils"]
+  "include": ["index.ts", "utils", "custom.d.ts"]
 }
+
 

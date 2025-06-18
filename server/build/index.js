@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const multer_1 = __importDefault(require("multer"));
-const pdfParser_1 = require("./utils/pdfParser");
+const pdfParser_js_1 = require("./utils/pdfParser.js");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3001;
 app.use((0, cors_1.default)());
@@ -14,7 +14,7 @@ app.use(express_1.default.json());
 const upload = (0, multer_1.default)({ dest: 'uploads/' });
 app.post('/api/upload/pdf', upload.single('file'), async (req, res) => {
     try {
-        const result = await (0, pdfParser_1.parseTeklaPDF)(req.file.path);
+        const result = await (0, pdfParser_js_1.parseTeklaPDF)(req.file.path);
         res.json(result);
     }
     catch (err) {

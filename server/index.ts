@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import { parseTeklaPDF } from './utils/pdfParser';
+import { parseTeklaPDF } from './utils/pdfParser.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -28,5 +28,6 @@ app.get('/', (_req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`✅ Server running on port ${port}`);
 });
+
 
 
