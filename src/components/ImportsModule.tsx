@@ -2,45 +2,43 @@ import React, { useState } from 'react';
 
 const ImportsModule = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [parsedData, setParsedData] = useState<any[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
     setSelectedFile(file);
   };
 
   const handleImport = async () => {
-    if (!selectedFile) return alert("Please select a file first.");
+    if (!selectedFile) return alert("No file selected.");
 
-    const text = await selectedFile.text();
-    const lines = text.split('\n');
-    const jobEntries: any[] = [];
+    const formData = new FormData();
+    formData.append('file', selectedFile);
 
-    lines.forEach(line => {
-      const jobMatch = line.match(/Job\s+#:\s*(\d+)/);
-      const markMatch = line.match(/\sMark\s+(\S+)/);
-      const hoursMatch = line.match(/(\d+\.\d{2})$/);
-      const empMatch = line.match(/\s([a-zA-Z0-9]+)\s+\d{1,2}\/\d{1,2}\/\d{4}/);
+    const apiHost = window.location.hostname.includes('localhost')
+      ? 'http://localhost:3001'
+      : 'https://forgetrack-backend.onrender.com';
 
-      if (jobMatch && markMatch && hoursMatch && empMatch) {
-        jobEntries.push({
-          job: jobMatch[1],
-          mark: markMatch[1],
-          employee: empMatch[1],
-          hours: parseFloat(hoursMatch[1])
-        });
-      }
+    const res = await fetch(`${apiHost}/api/upload/pdf`, {
+      method: 'POST',
+      body: formData
     });
 
-    setParsedData(jobEntries);
-    localStorage.setItem('importedJobs', JSON.stringify(jobEntries));
-    alert(`Imported ${jobEntries.length} records.`);
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      alert("Error importing: invalid response.");
+      return;
+    }
+
+    setRecords(data);
+    localStorage.setItem('teklaData', JSON.stringify(data));
+    alert(`Imported ${data.length} records.`);
   };
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Import Tekla PDF</h1>
-      <input type="file" accept=".pdf,.txt" onChange={handleFileChange} />
+      <input type="file" accept=".pdf" onChange={handleFileChange} />
       <button
         className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md shadow-md"
         onClick={handleImport}
@@ -48,13 +46,13 @@ const ImportsModule = () => {
         Start Import
       </button>
 
-      {parsedData.length > 0 && (
-        <div className="mt-6 text-sm text-gray-300">
-          <strong>Imported Records:</strong>
+      {records.length > 0 && (
+        <div className="mt-4 text-sm text-gray-300">
+          <strong>Imported:</strong>
           <ul className="mt-2 list-disc pl-5">
-            {parsedData.map((item, idx) => (
-              <li key={idx}>
-                Job {item.job}, Mark {item.mark}, {item.employee}, {item.hours} hrs
+            {records.map((r, i) => (
+              <li key={i}>
+                Job {r.job}, Mark {r.mark}, {r.employee}, {r.station}, {r.hours} hrs
               </li>
             ))}
           </ul>
@@ -65,4 +63,6 @@ const ImportsModule = () => {
 };
 
 export default ImportsModule;
+
+
 
