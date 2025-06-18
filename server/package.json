@@ -2,7 +2,7 @@
   "name": "forge-backend",
   "version": "1.0.0",
   "main": "build/index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node build/index.js"
   },
