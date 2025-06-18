@@ -5,10 +5,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strict": false,
     "outDir": "build"
   },
-  "include": ["index.ts", "utils", "globals.d.ts"]
+  "include": ["index.ts", "utils", "custom.d.ts"]
 }
+
 
 

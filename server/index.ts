@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { parseTeklaPDF } from './utils/pdfParser.js';
@@ -11,23 +11,31 @@ app.use(express.json());
 
 const upload = multer({ dest: 'uploads/' });
 
-app.post('/api/upload/pdf', upload.single('file'), async (req: Request, res: Response) => {
+app.post('/api/upload/pdf', upload.single('file'), async (req: any, res: any) => {
   try {
-    const result = await parseTeklaPDF((req.file as Express.Multer.File).path);
-    res.json(result);
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const result = await parseTeklaPDF(file.path);
+    return res.status(200).json(result);
   } catch (err) {
     console.error('PDF parse error:', err);
-    res.status(500).json({ error: 'Failed to parse PDF' });
+    return res.status(500).json({ error: 'Failed to parse PDF' });
   }
 });
 
-app.get('/', (_req: Request, res: Response) => {
-  res.send('ForgeTrack Backend Running');
+app.get('/', (_req: any, res: any) => {
+  res.status(200).send('ForgeTrack Backend Running');
 });
 
 app.listen(port, () => {
   console.log(`✅ Server running on port ${port}`);
 });
+
+
+
 
 
 

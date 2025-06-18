@@ -14,16 +14,20 @@ app.use(express_1.default.json());
 const upload = (0, multer_1.default)({ dest: 'uploads/' });
 app.post('/api/upload/pdf', upload.single('file'), async (req, res) => {
     try {
-        const result = await (0, pdfParser_js_1.parseTeklaPDF)(req.file.path);
-        res.json(result);
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const result = await (0, pdfParser_js_1.parseTeklaPDF)(file.path);
+        return res.status(200).json(result);
     }
     catch (err) {
         console.error('PDF parse error:', err);
-        res.status(500).json({ error: 'Failed to parse PDF' });
+        return res.status(500).json({ error: 'Failed to parse PDF' });
     }
 });
 app.get('/', (_req, res) => {
-    res.send('ForgeTrack Backend Running');
+    res.status(200).send('ForgeTrack Backend Running');
 });
 app.listen(port, () => {
     console.log(`✅ Server running on port ${port}`);
