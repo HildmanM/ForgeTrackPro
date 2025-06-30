@@ -27,38 +27,42 @@ const PDFImport = () => {
         const loadingTask = pdfjsLib.getDocument({ data: typedarray });
         const pdf = await loadingTask.promise;
 
-        const allText: string[] = [];
+        const pages: string[] = [];
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const strings = content.items.map((item: any) => item.str);
-          allText.push(strings.join(' '));
+          const pageText = content.items.map((item: any) => item.str).join(' ');
+          pages.push(pageText);
         }
 
-        const fullText = allText.join('\n');
-        const rows = fullText
+        const combinedText = pages.join('\n');
+
+        const jobs = combinedText
           .split(/Job #:/)
           .slice(1)
-          .map((block) => {
-            const jobMatch = block.match(/^(\d+)/);
-            const jobNumber = jobMatch ? jobMatch[1] : 'Unknown';
+          .map((section) => {
+            const jobNumber = section.match(/^(\d+)/)?.[1] ?? 'N/A';
+            const mark = section.match(/Mark\s*:\s*([\w\-]+)/)?.[1] ?? 'N/A';
 
-            const markMatch = block.match(/Mark\s*:\s*([\w\-]+)/);
-            const mark = markMatch ? markMatch[1] : 'Unknown';
+            const matches = [...section.matchAll(
+              /(Python|Dragon|6x6 Angle Master|8x8 Angle Master|Plate Processor)\s+\d+\s+(\w+)\d{1,2}\/\d{1,2}\/\d{4}\s+([\d.]+)/
+            )];
 
-            const stationMatches = [...block.matchAll(/(Python|Dragon|6x6 Angle Master|8x8 Angle Master|Plate Processor)\s+\d+\s+(\w+)\d+\/\d+\/\d+\s+([\d.]+)/g)];
-
-            return stationMatches.map((match) => ({
+            return matches.map((match) => ({
               jobNumber,
               mark,
               station: match[1],
               employee: match[2],
-              hours: parseFloat(match[3]),
+              hours: parseFloat(match[3])
             }));
           })
           .flat();
 
-        setParsedData(rows);
+        if (jobs.length === 0) {
+          setError('No matching job data found in PDF.');
+        }
+
+        setParsedData(jobs);
       };
 
       reader.readAsArrayBuffer(selectedFile);
@@ -69,7 +73,7 @@ const PDFImport = () => {
   };
 
   return (
-    <div className="text-white p-6 space-y-4">
+    <div className="text-white p-6 space-y-6">
       <h1 className="text-2xl font-bold">Import PDF</h1>
 
       <div className="flex items-center space-x-4">
@@ -91,20 +95,20 @@ const PDFImport = () => {
 
       {parsedData.length > 0 && (
         <div className="overflow-x-auto mt-6 bg-gray-800 p-4 border border-gray-700 rounded-lg">
-          <h2 className="text-lg mb-2">Parsed PDF Table</h2>
+          <h2 className="text-lg mb-3">Parsed PDF Data</h2>
           <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-400">
-                <th className="px-3 py-2">Job #</th>
-                <th className="px-3 py-2">Mark</th>
-                <th className="px-3 py-2">Station</th>
-                <th className="px-3 py-2">Employee</th>
-                <th className="px-3 py-2">Hours</th>
+            <thead className="text-gray-400">
+              <tr>
+                <th className="px-3 py-2 text-left">Job #</th>
+                <th className="px-3 py-2 text-left">Mark</th>
+                <th className="px-3 py-2 text-left">Station</th>
+                <th className="px-3 py-2 text-left">Employee</th>
+                <th className="px-3 py-2 text-left">Hours</th>
               </tr>
             </thead>
             <tbody>
-              {parsedData.map((row, idx) => (
-                <tr key={idx} className="border-t border-gray-700">
+              {parsedData.map((row, index) => (
+                <tr key={index} className="border-t border-gray-700">
                   <td className="px-3 py-2">{row.jobNumber}</td>
                   <td className="px-3 py-2">{row.mark}</td>
                   <td className="px-3 py-2">{row.station}</td>
@@ -121,5 +125,6 @@ const PDFImport = () => {
 };
 
 export default PDFImport;
+
 
 
