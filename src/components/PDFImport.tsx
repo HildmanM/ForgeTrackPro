@@ -1,55 +1,65 @@
 import React, { useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const PDFImport = () => {
   const [parsedData, setParsedData] = useState<any[]>([]);
+  const [error, setError] = useState('');
 
   const handlePDFUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = async function () {
-      const typedarray = new Uint8Array(this.result as ArrayBuffer);
-      const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+    try {
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const typedarray = new Uint8Array(this.result as ArrayBuffer);
 
-      const allText: string[] = [];
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const strings = content.items.map((item: any) => item.str);
-        allText.push(strings.join(' '));
-      }
+        // Dynamic import to avoid build errors on Netlify
+        const pdfjsLib = await import('pdfjs-dist/build/pdf');
+        const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-      const fullText = allText.join('\n');
-      const rows = fullText
-        .split(/Job #:/)
-        .slice(1)
-        .map((block) => {
-          const jobMatch = block.match(/^(\d+)/);
-          const jobNumber = jobMatch ? jobMatch[1] : 'Unknown';
+        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
 
-          const markMatch = block.match(/Mark\s*:\s*([\w\-]+)/);
-          const mark = markMatch ? markMatch[1] : 'Unknown';
+        const allText: string[] = [];
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const strings = content.items.map((item: any) => item.str);
+          allText.push(strings.join(' '));
+        }
 
-          const stationMatches = [...block.matchAll(/(Python|Dragon|6x6 Angle Master|8x8 Angle Master|Plate Processor)\s+\d+\s+(\w+)\d+\/\d+\/\d+\s+([\d.]+)/g)];
+        const fullText = allText.join('\n');
+        const rows = fullText
+          .split(/Job #:/)
+          .slice(1)
+          .map((block) => {
+            const jobMatch = block.match(/^(\d+)/);
+            const jobNumber = jobMatch ? jobMatch[1] : 'Unknown';
 
-          return stationMatches.map((match) => ({
-            jobNumber,
-            mark,
-            station: match[1],
-            employee: match[2],
-            hours: parseFloat(match[3]),
-          }));
-        })
-        .flat();
+            const markMatch = block.match(/Mark\s*:\s*([\w\-]+)/);
+            const mark = markMatch ? markMatch[1] : 'Unknown';
 
-      setParsedData(rows);
-    };
-    reader.readAsArrayBuffer(file);
+            const stationMatches = [...block.matchAll(/(Python|Dragon|6x6 Angle Master|8x8 Angle Master|Plate Processor)\s+\d+\s+(\w+)\d+\/\d+\/\d+\s+([\d.]+)/g)];
+
+            return stationMatches.map((match) => ({
+              jobNumber,
+              mark,
+              station: match[1],
+              employee: match[2],
+              hours: parseFloat(match[3]),
+            }));
+          })
+          .flat();
+
+        setParsedData(rows);
+      };
+
+      reader.readAsArrayBuffer(file);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to parse PDF. Make sure it follows the correct format.');
+    }
   };
 
   return (
@@ -62,6 +72,8 @@ const PDFImport = () => {
         onChange={handlePDFUpload}
         className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
       />
+
+      {error && <div className="text-red-400">{error}</div>}
 
       {parsedData.length > 0 && (
         <div className="overflow-x-auto mt-6 bg-gray-800 border border-gray-700 rounded-lg p-4">
