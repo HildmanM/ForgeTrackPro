@@ -1,38 +1,40 @@
 import React from 'react';
 
+const jobs = [
+  { id: 'J-101', client: 'Alpha Steel', status: 'Completed', dueDate: '2025-06-25' },
+  { id: 'J-102', client: 'Beta Fabrication', status: 'In Progress', dueDate: '2025-07-02' },
+  { id: 'J-103', client: 'Gamma Works', status: 'Pending', dueDate: '2025-07-10' },
+];
+
 const JobsModule = () => {
-  const data = JSON.parse(localStorage.getItem('teklaData') || '[]');
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Jobs Module</h1>
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg">
-        <table className="w-full text-sm text-gray-300">
-          <thead>
-            <tr className="text-left border-b border-gray-600">
-              <th className="py-2">Job #</th>
-              <th className="py-2">Mark</th>
-              <th className="py-2">Station</th>
-              <th className="py-2">Employee</th>
-              <th className="py-2">Hours</th>
+    <div className="text-white p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Jobs</h1>
+      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <thead>
+          <tr className="bg-gray-700 text-gray-300">
+            <th className="p-3 text-left">Job ID</th>
+            <th className="p-3 text-left">Client</th>
+            <th className="p-3 text-left">Status</th>
+            <th className="p-3 text-left">Due Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {jobs.map((job) => (
+            <tr key={job.id} className="border-t border-gray-700 hover:bg-gray-700">
+              <td className="p-3">{job.id}</td>
+              <td className="p-3">{job.client}</td>
+              <td className="p-3">{job.status}</td>
+              <td className="p-3">{job.dueDate}</td>
             </tr>
-          </thead>
-          <tbody>
-            {data.map((job: any, idx) => (
-              <tr key={idx} className="border-b border-gray-700">
-                <td className="py-2">{job.job}</td>
-                <td className="py-2">{job.mark}</td>
-                <td className="py-2">{job.station}</td>
-                <td className="py-2">{job.employee}</td>
-                <td className="py-2">{job.hours}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
 export default JobsModule;
+
 
 

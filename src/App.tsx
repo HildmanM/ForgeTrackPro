@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
-import JobsModule from './components/JobsModule';
-import InventoryModule from './components/InventoryModule';
-import ClientsModule from './components/ClientsModule';
-import LaborModule from './components/LaborModule';
-import ReportsModule from './components/ReportsModule';
-import ImportsModule from './components/ImportsModule';
+import JobsModule from './components/jobs/JobsModule';
+import InventoryModule from './components/inventory/InventoryModule';
+import ClientsModule from './components/clients/ClientsModule';
+import LaborModule from './components/labor/LaborModule';
+import ReportsModule from './components/reports/ReportsModule';
+import ImportPage from './components/ImportPage';
 
 export function App() {
   return (
@@ -20,7 +20,7 @@ export function App() {
           <Route path="/clients" element={<ClientsModule />} />
           <Route path="/labor" element={<LaborModule />} />
           <Route path="/reports" element={<ReportsModule />} />
-          <Route path="/imports" element={<ImportsModule />} />
+          <Route path="/import" element={<ImportPage />} />
         </Routes>
       </Layout>
     </Router>

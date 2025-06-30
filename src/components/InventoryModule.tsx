@@ -1,19 +1,37 @@
 import React from 'react';
+
+const inventory = [
+  { id: 'I-001', item: 'H-Beams', quantity: 3, location: 'Yard A' },
+  { id: 'I-002', item: 'Rebar', quantity: 8, location: 'Yard B' },
+  { id: 'I-003', item: 'Steel Plates', quantity: 15, location: 'Shop Floor' },
+];
+
 const InventoryModule = () => {
-  return <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Inventory Management</h1>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md shadow-md">
-          Add Inventory
-        </button>
-      </div>
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg">
-        <h2 className="text-lg font-medium mb-4">Material Inventory</h2>
-        <div className="text-center py-16 text-gray-400">
-          Inventory module functionality will be implemented here, including
-          steel types, quantities, and low stock alerts.
-        </div>
-      </div>
-    </div>;
+  return (
+    <div className="text-white p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Inventory</h1>
+      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <thead>
+          <tr className="bg-gray-700 text-gray-300">
+            <th className="p-3 text-left">Item ID</th>
+            <th className="p-3 text-left">Item</th>
+            <th className="p-3 text-left">Quantity</th>
+            <th className="p-3 text-left">Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inventory.map((inv) => (
+            <tr key={inv.id} className="border-t border-gray-700 hover:bg-gray-700">
+              <td className="p-3">{inv.id}</td>
+              <td className="p-3">{inv.item}</td>
+              <td className="p-3">{inv.quantity}</td>
+              <td className="p-3">{inv.location}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
+
 export default InventoryModule;
