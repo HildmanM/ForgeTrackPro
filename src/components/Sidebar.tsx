@@ -7,7 +7,8 @@ import {
   UsersIcon,
   ClockIcon,
   BarChart3Icon,
-  MenuIcon
+  MenuIcon,
+  FileTextIcon
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -20,7 +21,8 @@ const Sidebar = () => {
     { path: '/clients', label: 'Clients', icon: <UsersIcon size={20} /> },
     { path: '/labor', label: 'Labor Hours', icon: <ClockIcon size={20} /> },
     { path: '/reports', label: 'Reports', icon: <BarChart3Icon size={20} /> },
-    { path: '/import', label: 'Import Data', icon: <BarChart3Icon size={20} /> }
+    { path: '/import', label: 'Import Data', icon: <BarChart3Icon size={20} /> },
+    { path: '/import-pdf', label: 'Import PDF', icon: <FileTextIcon size={20} /> }
   ];
 
   return (
@@ -56,4 +58,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
 
