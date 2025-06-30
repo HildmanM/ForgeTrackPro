@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 
 const PDFImport = () => {
   const [parsedData, setParsedData] = useState<any[]>([]);
@@ -13,13 +14,8 @@ const PDFImport = () => {
       const reader = new FileReader();
       reader.onload = async function () {
         const typedarray = new Uint8Array(this.result as ArrayBuffer);
-
-        // Dynamic import to avoid build errors on Netlify
-        const pdfjsLib = await import('pdfjs-dist/build/pdf');
-        const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
-        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
-        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+        const pdf = await loadingTask.promise;
 
         const allText: string[] = [];
         for (let i = 1; i <= pdf.numPages; i++) {
@@ -58,26 +54,24 @@ const PDFImport = () => {
       reader.readAsArrayBuffer(file);
     } catch (err) {
       console.error(err);
-      setError('Failed to parse PDF. Make sure it follows the correct format.');
+      setError('Failed to parse PDF. Format may be wrong.');
     }
   };
 
   return (
     <div className="text-white p-6 space-y-4">
-      <h1 className="text-2xl font-bold">PDF Import: Completed Station Details</h1>
-
+      <h1 className="text-2xl font-bold">Import PDF</h1>
       <input
         type="file"
         accept=".pdf"
         onChange={handlePDFUpload}
         className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
       />
-
-      {error && <div className="text-red-400">{error}</div>}
+      {error && <div className="text-red-500 mt-2">{error}</div>}
 
       {parsedData.length > 0 && (
-        <div className="overflow-x-auto mt-6 bg-gray-800 border border-gray-700 rounded-lg p-4">
-          <h2 className="text-lg mb-3">Parsed Results</h2>
+        <div className="overflow-x-auto mt-6 bg-gray-800 p-4 border border-gray-700 rounded-lg">
+          <h2 className="text-lg mb-2">Parsed PDF Table</h2>
           <table className="min-w-full text-sm">
             <thead>
               <tr className="text-left text-gray-400">
@@ -89,8 +83,8 @@ const PDFImport = () => {
               </tr>
             </thead>
             <tbody>
-              {parsedData.map((row, index) => (
-                <tr key={index} className="border-t border-gray-700">
+              {parsedData.map((row, idx) => (
+                <tr key={idx} className="border-t border-gray-700">
                   <td className="px-3 py-2">{row.jobNumber}</td>
                   <td className="px-3 py-2">{row.mark}</td>
                   <td className="px-3 py-2">{row.station}</td>
@@ -107,4 +101,5 @@ const PDFImport = () => {
 };
 
 export default PDFImport;
+
 
