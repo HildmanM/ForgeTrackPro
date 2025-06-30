@@ -8,6 +8,7 @@ import ClientsModule from './components/clients/ClientsModule';
 import LaborModule from './components/labor/LaborModule';
 import ReportsModule from './components/reports/ReportsModule';
 import ImportPage from './components/ImportPage';
+import PDFImport from './components/PDFImport';
 
 export function App() {
   return (
@@ -21,8 +22,10 @@ export function App() {
           <Route path="/labor" element={<LaborModule />} />
           <Route path="/reports" element={<ReportsModule />} />
           <Route path="/import" element={<ImportPage />} />
+          <Route path="/import-pdf" element={<PDFImport />} />
         </Routes>
       </Layout>
     </Router>
   );
 }
+
