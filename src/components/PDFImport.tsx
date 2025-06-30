@@ -4,11 +4,21 @@ import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 const PDFImport = () => {
   const [parsedData, setParsedData] = useState<any[]>([]);
   const [error, setError] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handlePDFUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleParsePDF = async () => {
+    if (!selectedFile) {
+      setError('No file selected.');
+      return;
+    }
 
     try {
       const reader = new FileReader();
@@ -51,23 +61,33 @@ const PDFImport = () => {
         setParsedData(rows);
       };
 
-      reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(selectedFile);
     } catch (err) {
       console.error(err);
-      setError('Failed to parse PDF. Format may be wrong.');
+      setError('Failed to parse PDF.');
     }
   };
 
   return (
     <div className="text-white p-6 space-y-4">
       <h1 className="text-2xl font-bold">Import PDF</h1>
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={handlePDFUpload}
-        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-      />
-      {error && <div className="text-red-500 mt-2">{error}</div>}
+
+      <div className="flex items-center space-x-4">
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={handleFileChange}
+          className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+        />
+        <button
+          onClick={handleParsePDF}
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          Upload PDF
+        </button>
+      </div>
+
+      {error && <div className="text-red-400">{error}</div>}
 
       {parsedData.length > 0 && (
         <div className="overflow-x-auto mt-6 bg-gray-800 p-4 border border-gray-700 rounded-lg">
