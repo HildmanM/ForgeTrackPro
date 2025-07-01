@@ -1,8 +1,7 @@
 {
-  "name": "forge-backend",
+  "name": "forge_backend",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
@@ -13,3 +12,4 @@
     "pdf-parse": "^1.1.1"
   }
 }
+
