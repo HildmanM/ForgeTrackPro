@@ -30,3 +30,4 @@ export const jobStatusDistribution = [
   { name: 'In Progress', value: 10 },
   { name: 'Pending', value: 5 }
 ];
+
