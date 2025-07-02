@@ -1,37 +1,53 @@
+// server/index.js
+
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
+const pdfParse = require('pdf-parse');
+const xlsx = require('xlsx');
 const fs = require('fs');
-const pdf = require('pdf-parse');
 const path = require('path');
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3001;
+
+// ✅ Allow all origins (or restrict to your domain)
+app.use(cors({
+  origin: '*',
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const upload = multer({ dest: 'uploads/' });
 
+// ✅ PDF Upload Route
 app.post('/upload-pdf', upload.single('file'), async (req, res) => {
-  const filePath = req.file.path;
-
   try {
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdf(dataBuffer);
-
+    const dataBuffer = fs.readFileSync(req.file.path);
+    const data = await pdfParse(dataBuffer);
     res.json({ text: data.text });
-  } catch (error) {
-    console.error('PDF parse error:', error);
-    res.status(500).json({ error: 'Failed to parse PDF' });
-  } finally {
-    fs.unlink(filePath, () => {});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'PDF parsing failed' });
   }
 });
 
-app.get('/', (req, res) => {
-  res.send('ForgeTrack Backend is running.');
+// ✅ Excel Upload Route
+app.post('/upload-excel', upload.single('file'), (req, res) => {
+  try {
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+    res.json({ data: jsonData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Excel parsing failed' });
+  }
 });
 
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
