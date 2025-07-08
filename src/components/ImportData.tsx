@@ -21,7 +21,7 @@ const ImportData = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('https://your-backend-url.com/api/upload', {
+      const response = await fetch('https://forge-backend-tjsq.onrender.com/api/upload', {  // ✅ Correct URL here
         method: 'POST',
         body: formData,
       });
@@ -49,5 +49,6 @@ const ImportData = () => {
 };
 
 export default ImportData;
+
 
 
