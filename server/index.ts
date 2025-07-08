@@ -1,38 +1,28 @@
-import express from "express";
-import cors from "cors";
-import fileUpload from "express-fileupload";
-import parsePDF from "./pdf-parse";
+import express from 'express';
+import cors from 'cors';
+import uploadRoutes from './routes/upload.js';  // ✅ Add this line
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(fileUpload());
+app.use(cors({
+  origin: 'https://forgetrack.net',  // ✅ Your actual frontend domain
+}));
 
-// PDF Upload Endpoint
-app.post("/api/upload-pdf", async (req, res) => {
-  try {
-    if (!req.files || !req.files.file) {
-      return res.status(400).send("No file uploaded.");
-    }
+// Serve uploaded files (optional)
+app.use('/uploads', express.static('./server/uploads'));
 
-    const file = req.files.file as fileUpload.UploadedFile;
-    const buffer = file.data;
+// ✅ Register Upload Route
+app.use('/api', uploadRoutes);
 
-    const result = await parsePDF(buffer);
-    res.json(result);
-  } catch (err) {
-    console.error("Error processing PDF:", err);
-    res.status(500).send("Failed to process PDF.");
-  }
+app.get('/', (req, res) => {
+  res.send('Forge Backend Running');
 });
-
-// ✅ Remove this — causes deployment failure
-// parsePDF('./test/data/05-versions-space.pdf');
 
 app.listen(PORT, () => {
-  console.log(`PDF server listening on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+
 
 
 
