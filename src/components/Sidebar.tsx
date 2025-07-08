@@ -7,9 +7,8 @@ import {
   UsersIcon,
   ClockIcon,
   BarChart3Icon,
-  FileTextIcon,
-  FilePlus2Icon,
-  MenuIcon
+  MenuIcon,
+  UploadIcon
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -22,8 +21,7 @@ const Sidebar = () => {
     { path: '/clients', label: 'Clients', icon: <UsersIcon size={20} /> },
     { path: '/labor', label: 'Labor Hours', icon: <ClockIcon size={20} /> },
     { path: '/reports', label: 'Reports', icon: <BarChart3Icon size={20} /> },
-    { path: '/import', label: 'Import Data', icon: <FilePlus2Icon size={20} /> },
-    { path: '/import-pdf', label: 'Import PDF', icon: <FileTextIcon size={20} /> }
+    { path: '/import', label: 'Import Data', icon: <UploadIcon size={20} /> }, // ✅ Added Import link
   ];
 
   return (
@@ -35,7 +33,7 @@ const Sidebar = () => {
         </button>
       </div>
       <nav className="py-4">
-        {navItems.map((item) => (
+        {navItems.map(item => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -55,6 +53,7 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
 
 
 
