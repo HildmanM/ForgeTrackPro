@@ -1,37 +1,27 @@
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const fs = require('fs');
-const pdf = require('pdf-parse');
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import uploadRoutes from './routes/upload.js';  // ✅ Ensure this exists
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 5000;
 
-const upload = multer({ dest: 'uploads/' });
+// ✅ CORS Fix: Allow your frontend to connect
+app.use(cors({
+  origin: 'https://forgetrack.net',  // ✅ Your live frontend domain
+}));
 
-app.post('/upload-pdf', upload.single('file'), async (req, res) => {
-  const filePath = req.file.path;
+// ✅ Serve Uploaded Files (Optional)
+app.use('/uploads', express.static('./server/uploads'));
 
-  try {
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdf(dataBuffer);
+// ✅ Add Upload Route
+app.use('/api', uploadRoutes);
 
-    res.json({ text: data.text });
-  } catch (error) {
-    console.error('PDF parse error:', error);
-    res.status(500).json({ error: 'Failed to parse PDF' });
-  } finally {
-    fs.unlink(filePath, () => {});
-  }
-});
-
+// ✅ Default Route
 app.get('/', (req, res) => {
-  res.send('ForgeTrack Backend is running.');
+  res.send('Forge Backend Running');
 });
 
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+
