@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { jobsData } from './upload.js';
-
+import { jobs } from '../dataStore.js';
 const router = Router();
 
-router.get('/', (req, res) => {
-  res.json({ jobs: jobsData });
+router.get('/', (_req, res) => {
+  res.json({ jobs });
 });
 
 export default router;
+

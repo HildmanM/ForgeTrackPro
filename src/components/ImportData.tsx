@@ -1,48 +1,43 @@
 import React, { useState } from 'react';
 import { importFile } from '../services/api';
 
-const ImportData: React.FC = () => {
-  const [file, setFile] = useState<File>();
-  const [message, setMessage] = useState('');
-  const [content, setContent] = useState<any>(null);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setFile(e.target.files[0]);
-  };
+export default function ImportData() {
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState('');
+  const [text, setText] = useState('');
 
   const onUpload = async () => {
-    if (!file) return setMessage('Please choose a file first');
-    setMessage('Uploading…');
+    if (!file) return;
+    setStatus('Uploading...');
     try {
-      const res = await importFile(file);
-      setMessage('File uploaded and parsed successfully.');
-      setContent(res.data);
-    } catch (err) {
-      console.error(err);
-      setMessage('Upload failed.');
+      const { data } = await importFile(file);
+      setText(data.text);
+      setStatus('File uploaded and parsed successfully.');
+    } catch {
+      setStatus('Upload failed.');
     }
   };
 
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-2xl mb-4">Import Data</h1>
-      <input type="file" onChange={onChange} />
-      <button className="ml-4 px-4 py-2 bg-blue-600 text-white" onClick={onUpload}>
+      <input type="file" onChange={e => setFile(e.target.files?.[0]||null)} />
+      <button onClick={onUpload} className="ml-2 px-4 py-2 bg-blue-600 text-white rounded">
         Upload
       </button>
-      <p className="mt-4" style={{ color: message.includes('failed') ? 'red' : 'gold' }}>
-        {message}
-      </p>
-      {content && (
-        <pre className="mt-4 p-4 bg-gray-800 text-white max-h-96 overflow-auto">
-          {JSON.stringify(content, null, 2)}
-        </pre>
+      <div className={status.startsWith('Upload failed') ? 'text-red-500' : 'text-yellow-400'}>
+        {status}
+      </div>
+      {text && (
+        <>
+          <h2 className="mt-6 mb-2 text-xl">Imported Data</h2>
+          <pre className="bg-gray-800 p-4 rounded overflow-auto">{text}</pre>
+        </>
       )}
     </div>
   );
-};
+}
 
-export default ImportData;
 
 
 
