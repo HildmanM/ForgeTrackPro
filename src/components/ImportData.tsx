@@ -12,14 +12,16 @@ const ImportData: React.FC = () => {
       return;
     }
     setMessage('Uploading…');
+
     const form = new FormData();
     form.append('file', file);
 
     try {
+      // <-- point directly at your Render backend
       const res = await axios.post(
         'https://forge-backend-1jaq.onrender.com/api/upload',
         form,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        { headers: { 'Content-Type': 'multipart/form-data' }}
       );
       setPayload(res.data.data);
       setMessage('File uploaded and parsed successfully');
