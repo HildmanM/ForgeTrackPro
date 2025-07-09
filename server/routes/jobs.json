@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getJobs }   from '../dataStore.js';
+
+const router = new Router();
+
+router.get('/jobs', (_, res) => {
+  res.json({ rows: getJobs() });
+});
+
+export default router;
