@@ -2,10 +2,11 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import xlsx from 'xlsx';
+import pdfParse from 'pdf-parse';
 
 const router = express.Router();
 
-// Clean filenames to avoid issues (spaces, special characters)
 const cleanFileName = (name) => {
   return name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
 };
@@ -27,17 +28,41 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  console.log('Uploaded file:', req.file.filename);
-  res.status(200).json({
-    message: 'File uploaded successfully',
-    filename: req.file.filename,
-  });
+  const filePath = req.file.path;
+  const ext = path.extname(filePath).toLowerCase();
+
+  try {
+    let parsedData;
+
+    if (ext === '.xlsx' || ext === '.xls') {
+      const workbook = xlsx.readFile(filePath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      parsedData = xlsx.utils.sheet_to_json(sheet);
+    } else if (ext === '.pdf') {
+      const fileBuffer = fs.readFileSync(filePath);
+      const pdfData = await pdfParse(fileBuffer);
+      parsedData = pdfData.text;
+    } else {
+      return res.status(400).json({ message: 'Unsupported file type.' });
+    }
+
+    res.status(200).json({
+      message: 'File uploaded and parsed successfully',
+      filename: req.file.filename,
+      data: parsedData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error parsing file.' });
+  }
 });
 
 export default router;
+
 
