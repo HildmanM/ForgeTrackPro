@@ -21,7 +21,8 @@ const ImportData = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('https://forge-backend-tjsq.onrender.com/api/upload', {  // ✅ Correct URL here
+      const response = await fetch('https://forge-backend-1jaq.onrender.com/api/upload', {  // ✅ Correct URL
+
         method: 'POST',
         body: formData,
       });
