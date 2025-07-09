@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// pull in our new env var, defaulting to empty so local dev (vite proxy) still works:
 const API = import.meta.env.VITE_API_URL || '';
 
 export function importFile(file: File) {
