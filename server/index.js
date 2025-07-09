@@ -1,29 +1,31 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import uploadRoutes from './routes/upload.js';
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const uploadRoutes = require('./routes/upload');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 1) Allow only your frontend domain
-app.use(cors({ origin: 'https://forgetrack.net' }));
+// allow your front-end domain to talk here:
+app.use(cors({
+  origin: 'https://forgetrack.net'
+}));
 
-// 2) If you ever need JSON bodies
-app.use(express.json());
+// serve any saved files (optional)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 3) Serve uploaded files (optional)
-app.use('/uploads', express.static(path.join(process.cwd(), 'server', 'uploads')));
-
-// 4) Mount our upload route under /api
+// all our upload/parsing lives under /api
 app.use('/api', uploadRoutes);
 
-// 5) Healthcheck
-app.get('/', (_req, res) => res.send('Forge Backend Running'));
+// health-check
+app.get('/', (req, res) => {
+  res.send('Forge Backend Running');
+});
 
 app.listen(PORT, () => {
-  console.log(`🔥 Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
+
 
 
 

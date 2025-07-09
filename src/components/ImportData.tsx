@@ -2,62 +2,59 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const ImportData: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File|null>(null);
   const [message, setMessage] = useState<string>('');
-  const [pdfText, setPdfText] = useState<string>('');
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0] || null;
-    setFile(f);
-  };
+  const [payload, setPayload] = useState<any>(null);
 
   const handleUpload = async () => {
     if (!file) {
-      setMessage('Please select a PDF.');
+      setMessage('No file chosen');
       return;
     }
     setMessage('Uploading…');
-    const formData = new FormData();
-    formData.append('file', file);
+    const form = new FormData();
+    form.append('file', file);
 
     try {
-      const res = await axios.post('/api/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setPdfText(res.data.text);
+      const res = await axios.post(
+        'https://forge-backend-1jaq.onrender.com/api/upload',
+        form,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      setPayload(res.data.data);
       setMessage('File uploaded and parsed successfully');
     } catch (err) {
       console.error(err);
-      setMessage('Upload failed. Check console.');
+      setMessage('Error uploading file');
     }
   };
 
   return (
-    <div className="space-y-4 p-6">
-      <h1 className="text-2xl font-bold">Import Data</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Import Data</h1>
       <input
         type="file"
-        accept="application/pdf"
-        onChange={handleFileChange}
-        className="border p-2"
+        onChange={e => setFile(e.target.files?.[0]||null)}
+        className="mb-4"
       />
       <button
         onClick={handleUpload}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
       >
         Upload
       </button>
-      {message && <div className="text-yellow-300">{message}</div>}
-      {pdfText && (
-        <pre className="bg-gray-800 text-white p-4 rounded max-h-96 overflow-auto">
-          {pdfText}
-        </pre>
+      {message && <p className="mt-4 text-yellow-400">{message}</p>}
+      {payload && (
+        <div className="mt-6 bg-gray-800 p-4 rounded h-64 overflow-auto text-gray-200">
+          <pre>{JSON.stringify(payload, null, 2)}</pre>
+        </div>
       )}
     </div>
   );
 };
 
 export default ImportData;
+
 
 
 
