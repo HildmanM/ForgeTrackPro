@@ -7,6 +7,7 @@ import pdfParse from 'pdf-parse';
 
 const router = express.Router();
 
+// Clean and sanitize filenames
 const cleanFileName = (name) => {
   return name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
 };
@@ -45,7 +46,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       const sheet = workbook.Sheets[sheetName];
       parsedData = xlsx.utils.sheet_to_json(sheet);
     } else if (ext === '.pdf') {
-      const fileBuffer = fs.readFileSync(filePath);
+      const fileBuffer = fs.readFileSync(filePath); // ✅ This reads the uploaded file
       const pdfData = await pdfParse(fileBuffer);
       parsedData = pdfData.text;
     } else {
@@ -58,11 +59,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       data: parsedData,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error during file parsing:', err.message);
     res.status(500).json({ message: 'Error parsing file.' });
   }
 });
 
 export default router;
+
 
 
