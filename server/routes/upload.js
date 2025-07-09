@@ -1,49 +1,54 @@
-const express = require('express');
-const multer = require('multer');
-const pdfParse = require('pdf-parse');
-const xlsx = require('xlsx');
-const fs = require('fs');
-const path = require('path');
+import { Router } from 'express';
+import multer from 'multer';
+import pdf from 'pdf-parse';
+import XLSX from 'xlsx';
+import fs from 'fs';
+import path from 'path';
 
-const router = express.Router();
+const router = new Router();
 
-// destination folder for multer
-const upload = multer({
-  dest: path.join(__dirname, '../uploads')
+// ensure uploads folder
+const UPLOAD_DIR = path.resolve('uploads');
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+// name each file with timestamp + original name
+const storage = multer.diskStorage({
+  destination: UPLOAD_DIR,
+  filename: (_, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
+const upload = multer({ storage });
 
 router.post('/upload', upload.single('file'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-
   try {
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    let output;
+    const { path: filePath, originalname } = req.file;
+    const ext = path.extname(originalname).toLowerCase();
 
     if (ext === '.pdf') {
-      // PDF parsing
-      const buffer = fs.readFileSync(req.file.path);
-      const pdfData = await pdfParse(buffer);
-      output = { text: pdfData.text };
-    } else if (ext === '.xlsx' || ext === '.xls') {
-      // Excel parsing
-      const workbook = xlsx.readFile(req.file.path);
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-      output = { rows };
-    } else {
-      return res.status(400).json({ error: 'Unsupported file type' });
+      const dataBuffer = fs.readFileSync(filePath);
+      const data = await pdf(dataBuffer);
+      return res.json({ text: data.text });
     }
 
-    return res.json({ data: output });
+    if (ext === '.xls' || ext === '.xlsx') {
+      const workbook = XLSX.readFile(filePath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      return res.json({ rows: jsonData });
+    }
+
+    return res.status(400).json({ error: 'Unsupported file type' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Error processing file' });
+    res.status(500).json({ error: 'Import failed', details: err.message });
   }
 });
 
-module.exports = router;
+export default router;
+
+
 
 
 
