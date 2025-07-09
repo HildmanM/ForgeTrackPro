@@ -7,7 +7,7 @@ import InventoryModule from './components/inventory/InventoryModule';
 import ClientsModule from './components/clients/ClientsModule';
 import LaborModule from './components/labor/LaborModule';
 import ReportsModule from './components/reports/ReportsModule';
-import ImportData from './components/ImportData'; // ✅ Added import
+import ImportData from './components/ImportData';
 
 export function App() {
   return (
@@ -20,12 +20,13 @@ export function App() {
           <Route path="/clients" element={<ClientsModule />} />
           <Route path="/labor" element={<LaborModule />} />
           <Route path="/reports" element={<ReportsModule />} />
-          <Route path="/import" element={<ImportData />} /> {/* ✅ Added route */}
+          <Route path="/import" element={<ImportData />} />
         </Routes>
       </Layout>
     </Router>
   );
 }
+
 
 
 
