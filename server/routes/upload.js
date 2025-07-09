@@ -1,44 +1,18 @@
-import { Router } from 'express';
-import multer from 'multer';
-import fs from 'fs';
-import pdfParse from 'pdf-parse';
-import XLSX from 'xlsx';
-import { addJobs } from '../dataStore.js';
+import { Router } from "express";
+import multer from "multer";
+import pdfParse from "pdf-parse";
 
-const upload = multer({ dest: '/tmp' });
+const upload = multer();
 const router = Router();
 
-router.post('/', upload.single('file'), async (req, res, next) => {
+router.post("/", upload.single("file"), async (req, res) => {
   try {
-    const { path: tmpPath, originalname } = req.file;
-    const ext = originalname.split('.').pop().toLowerCase();
-    let text = '';
-
-    if (ext === 'pdf') {
-      const data = fs.readFileSync(tmpPath);
-      const parsed = await pdfParse(data);
-      text = parsed.text;
-    } else if (['xlsx','xls'].includes(ext)) {
-      const wb = XLSX.readFile(tmpPath);
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws);
-      const imported = rows.map(r => ({
-        id: r.id,
-        client: r.client,
-        status: r.status,
-        completion: r.completion,
-        dueDate: r.dueDate
-      }));
-      addJobs(imported);
-      text = JSON.stringify(imported, null, 2);
-    } else {
-      throw new Error('Unsupported file type');
-    }
-
-    fs.unlinkSync(tmpPath);
-    res.json({ text });
-  } catch (e) {
-    next(e);
+    const data = await pdfParse(req.file.buffer);
+    // apply your parsing logic; here we just echo back the raw text
+    res.json({ text: data.text });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "PDF parsing failed" });
   }
 });
 

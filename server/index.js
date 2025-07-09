@@ -1,27 +1,33 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import importRoute from './routes/upload.js';
-import jobsRoute from './routes/jobs.js';
+import path from "node:path";
+import express from "express";
+import cors from "cors";
+import uploadRoute from "./routes/upload.js";
+import jobsRoute from "./routes/jobs.js";
 
 const app = express();
+
+// allow your front-end to call the API
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/import', importRoute);
-app.use('/api/jobs', jobsRoute);
+// wire up your API routes
+app.use("/api/import", uploadRoute);
+app.use("/api/jobs", jobsRoute);
 
-// serve the Vite-built SPA
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, '../dist')));
-app.get('/*', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+// serve the Vite build output
+const distDir = path.resolve("dist");
+app.use(express.static(distDir));
+
+// single-page-app fallback:
+app.get("*", (req, res) => {
+  res.sendFile(path.join(distDir, "index.html"));
 });
 
-const port = process.env.PORT || 10000;
-app.listen(port, () => console.log(`Server listening on port ${port}`));
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
 
 
 
