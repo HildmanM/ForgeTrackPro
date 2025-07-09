@@ -1,15 +1,16 @@
 import axios from 'axios';
 
-const API = axios.create({
-  baseURL: 'https://forge-backend-1jaq.onrender.com/api'
-});
+const API = import.meta.env.VITE_API_URL || '';
 
-export const uploadFile = (file: File) => {
+export function importFile(file: File) {
   const form = new FormData();
   form.append('file', file);
-  return API.post<{ rows: any[] }>('/upload', form, {
+  return axios.post(`${API}/api/import`, form, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
-};
+}
 
-export const fetchJobs = () => API.get<{ rows: any[] }>('/jobs');
+export function listJobs() {
+  return axios.get<{ jobs: any[] }>(`${API}/api/jobs`);
+}
+

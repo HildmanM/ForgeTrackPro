@@ -1,43 +1,41 @@
 import React, { useState } from 'react';
-import { uploadFile } from '../services/api';
+import { importFile } from '../services/api';
 
 const ImportData: React.FC = () => {
-  const [file,   setFile]   = useState<File|null>(null);
-  const [status, setStatus] = useState<string>('');
-  const [rows,   setRows]   = useState<any[]|null>(null);
+  const [file, setFile] = useState<File>();
+  const [message, setMessage] = useState('');
+  const [content, setContent] = useState<any>(null);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFile(e.target.files?.[0] || null);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) setFile(e.target.files[0]);
+  };
 
   const onUpload = async () => {
-    if (!file) {
-      setStatus('Please choose a file.');
-      return;
-    }
-    setStatus('Uploading…');
+    if (!file) return setMessage('Please choose a file first');
+    setMessage('Uploading…');
     try {
-      const { data } = await uploadFile(file);
-      setRows(data.rows);
-      setStatus('File uploaded and parsed successfully.');
-    } catch {
-      setStatus('Upload failed.');
+      const res = await importFile(file);
+      setMessage('File uploaded and parsed successfully.');
+      setContent(res.data);
+    } catch (err) {
+      console.error(err);
+      setMessage('Upload failed.');
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Import Data</h1>
+    <div className="p-6">
+      <h1 className="text-2xl mb-4">Import Data</h1>
       <input type="file" onChange={onChange} />
-      <button
-        onClick={onUpload}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
+      <button className="ml-4 px-4 py-2 bg-blue-600 text-white" onClick={onUpload}>
         Upload
       </button>
-      {status && <p className="text-yellow-400">{status}</p>}
-      {rows && (
-        <pre className="bg-gray-800 text-gray-100 p-4 overflow-auto">
-          {JSON.stringify(rows, null, 2)}
+      <p className="mt-4" style={{ color: message.includes('failed') ? 'red' : 'gold' }}>
+        {message}
+      </p>
+      {content && (
+        <pre className="mt-4 p-4 bg-gray-800 text-white max-h-96 overflow-auto">
+          {JSON.stringify(content, null, 2)}
         </pre>
       )}
     </div>
@@ -45,6 +43,7 @@ const ImportData: React.FC = () => {
 };
 
 export default ImportData;
+
 
 
 

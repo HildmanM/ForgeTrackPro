@@ -1,25 +1,20 @@
 import express from 'express';
-import cors    from 'cors';
-import path    from 'path';
+import cors from 'cors';
 
-import uploadRoutes from './routes/upload.js';
-import jobsRoutes   from './routes/jobs.js';
+import uploadRouter from './routes/upload.js';
+import jobsRouter from './routes/jobs.js';
 
-const app  = express();
 const PORT = process.env.PORT || 10000;
+const app = express();
 
-app.use(cors({ origin: 'https://forgetrack.net' }));
+app.use(cors());
 app.use(express.json());
 
-// static serves uploads if needed
-app.use('/uploads', express.static(path.resolve('uploads')));
+// POST /api/import   →  parse PDF or XLSX into memory
+app.use('/api/import', uploadRouter);
 
-// our two API routers
-app.use('/api', uploadRoutes);
-app.use('/api', jobsRoutes);
-
-// sanity check
-app.get('/', (_, res) => res.send('Forge Backend Running'));
+// GET  /api/jobs     →  return last-uploaded rows
+app.use('/api/jobs', jobsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

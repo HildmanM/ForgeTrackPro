@@ -1,50 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { fetchJobs } from '../../services/api';
+import { listJobs } from '../../services/api';
 
 const JobsModule: React.FC = () => {
-  const [rows, setRows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchJobs()
-      .then(res => setRows(res.data.rows))
+    setLoading(true);
+    listJobs()
+      .then(res => setJobs(res.data.jobs))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading jobs…</div>;
-  if (!rows.length) return <div>No jobs imported yet.</div>;
-
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Jobs</h1>
-      <table className="min-w-full divide-y divide-gray-300">
-        <thead>
-          <tr>
-            {Object.keys(rows[0]).map(key => (
-              <th key={key} className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                {key}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {rows.map((row, i) => (
-            <tr key={i}>
-              {Object.values(row).map((val, j) => (
-                <td key={j} className="px-4 py-2 text-sm text-gray-800">
-                  {String(val)}
-                </td>
-              ))}
+    <div className="p-6">
+      <h1 className="text-2xl mb-4">Jobs</h1>
+      {loading ? (
+        <p>Loading…</p>
+      ) : (
+        <table className="min-w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Field 1</th>
+              <th className="px-4 py-2">Field 2</th>
+              <th className="px-4 py-2">Field 3</th>
+              <th className="px-4 py-2">Field 4</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {jobs.map((job, i) => (
+              <tr key={i} className="hover:bg-gray-700">
+                <td className="px-4 py-2">{job.text ?? job[Object.keys(job)[0]]}</td>
+                <td className="px-4 py-2">{job[Object.keys(job)[1]]}</td>
+                <td className="px-4 py-2">{job[Object.keys(job)[2]]}</td>
+                <td className="px-4 py-2">{job[Object.keys(job)[3]]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
 
 export default JobsModule;
+
 
 
 
