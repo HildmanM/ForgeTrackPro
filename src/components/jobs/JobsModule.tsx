@@ -1,31 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchJobs } from '../../services/api';
 
-const jobs = [
-  { id: 'J-101', client: 'Alpha Steel', status: 'Completed', dueDate: '2025-06-25' },
-  { id: 'J-102', client: 'Beta Fabrication', status: 'In Progress', dueDate: '2025-07-02' },
-  { id: 'J-103', client: 'Gamma Works', status: 'Pending', dueDate: '2025-07-10' },
-];
+const JobsModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const JobsModule = () => {
+  useEffect(() => {
+    fetchJobs()
+      .then(res => setRows(res.data.rows))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Loading jobs…</div>;
+  if (!rows.length) return <div>No jobs imported yet.</div>;
+
   return (
-    <div className="text-white p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Jobs</h1>
-      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Jobs</h1>
+      <table className="min-w-full divide-y divide-gray-300">
         <thead>
-          <tr className="bg-gray-700 text-gray-300">
-            <th className="p-3 text-left">Job ID</th>
-            <th className="p-3 text-left">Client</th>
-            <th className="p-3 text-left">Status</th>
-            <th className="p-3 text-left">Due Date</th>
+          <tr>
+            {Object.keys(rows[0]).map(key => (
+              <th key={key} className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                {key}
+              </th>
+            ))}
           </tr>
         </thead>
-        <tbody>
-          {jobs.map((job) => (
-            <tr key={job.id} className="border-t border-gray-700 hover:bg-gray-700">
-              <td className="p-3">{job.id}</td>
-              <td className="p-3">{job.client}</td>
-              <td className="p-3">{job.status}</td>
-              <td className="p-3">{job.dueDate}</td>
+        <tbody className="divide-y divide-gray-200">
+          {rows.map((row, i) => (
+            <tr key={i}>
+              {Object.values(row).map((val, j) => (
+                <td key={j} className="px-4 py-2 text-sm text-gray-800">
+                  {String(val)}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
@@ -35,6 +45,7 @@ const JobsModule = () => {
 };
 
 export default JobsModule;
+
 
 
 
