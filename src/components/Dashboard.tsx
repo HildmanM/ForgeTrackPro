@@ -1,51 +1,36 @@
-import React from 'react';
-import {
-  CheckCircleIcon,
-  ClockIcon,
-  TrendingUpIcon
-} from 'lucide-react';
-import KPICard from './KPICard';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+// … your KPICard imports …
 
-const Dashboard = () => {
-  const data = JSON.parse(localStorage.getItem('teklaData') || '[]');
-  const totalHours = data.reduce((sum: number, item: any) => sum + item.hours, 0);
-  const totalJobs = new Set(data.map((item: any) => item.job)).size;
+export default function Dashboard() {
+  const [jobsCompleted, setJobsCompleted] = useState(0);
+  const [totalLabor, setTotalLabor]     = useState(0);
 
-  const kpiData = [
-    {
-      title: 'Jobs Completed',
-      value: totalJobs,
-      trend: { value: 5, isPositive: true },
-      icon: <CheckCircleIcon />,
-      color: 'green'
-    },
-    {
-      title: 'Labor Hours',
-      value: totalHours.toFixed(2),
-      trend: { value: 12, isPositive: true },
-      icon: <ClockIcon />,
-      color: 'blue'
-    }
+  useEffect(() => {
+    axios.get("/api/jobs").then(r => setJobsCompleted(r.data.jobs.length));
+    axios.get("/api/labor").then(r => {
+      const sum = r.data.labor.reduce((acc, e) => acc + e.hours, 0);
+      setTotalLabor(sum);
+    });
+  }, []);
+
+  const kpis = [
+    { title: "Jobs Completed", value: jobsCompleted, /*…*/ },
+    { title: "Labor Hours",   value: totalLabor.toFixed(2), /*…*/ },
+    // material usage, efficiency… you can add more endpoints
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">ForgeTrack Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {kpiData.map((kpi, index) => (
-          <KPICard
-            key={index}
-            title={kpi.title}
-            value={kpi.value}
-            trend={kpi.trend}
-            icon={kpi.icon}
-            color={kpi.color}
-          />
+      {/* KPI Cards */}
+      <div className="grid …">
+        {kpis.map((k,i) => (
+          <KPICard key={i} title={k.title} value={k.value} /*…*/ />
         ))}
       </div>
+      {/* rest of your charts… */}
     </div>
   );
-};
+}
 
-export default Dashboard;
 

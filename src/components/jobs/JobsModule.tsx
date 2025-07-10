@@ -1,31 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { listJobs } from '../../services/api';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+interface Job {
+  stationDate: string;
+  stationName: string;
+  employee: string;
+  dateCompleted: string;
+  hours: number;
+  description: string;
+}
 
 export default function JobsModule() {
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+
   useEffect(() => {
-    listJobs().then(r => setJobs(r.data.jobs));
+    axios.get("/api/jobs")
+      .then(res => setJobs(res.data.jobs))
+      .catch(console.error);
   }, []);
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Jobs</h1>
       <table className="min-w-full bg-gray-800 text-white">
-        <thead>
-          <tr>
-            {['ID','Client','Status','Completion','Due Date'].map(h => (
-              <th key={h} className="px-4 py-2">{h}</th>
-            ))}
-          </tr>
-        </thead>
+        <thead>…</thead>
         <tbody>
-          {jobs.map(j => (
-            <tr key={j.id} className="border-b border-gray-700">
-              <td className="px-4 py-2">{j.id}</td>
-              <td className="px-4 py-2">{j.client}</td>
-              <td className="px-4 py-2">{j.status}</td>
-              <td className="px-4 py-2">{j.completion}%</td>
-              <td className="px-4 py-2">{j.dueDate}</td>
+          {jobs.map((j,i) => (
+            <tr key={i}>
+              <td>{j.stationDate}</td>
+              <td>{j.stationName}</td>
+              <td>{j.employee}</td>
+              <td>{j.dateCompleted}</td>
+              <td>{j.hours.toFixed(2)}</td>
+              <td>{j.description}</td>
             </tr>
           ))}
         </tbody>
