@@ -1,31 +1,32 @@
 export const kpiData = {
-  jobsCompleted: { value: 125, trend: '+5%' },
-  materialUsage: { value: '7,500 lbs', trend: '-2%' },
-  laborHours: { value: 3200, trend: '+3%' },
-  efficiencyRate: { value: '87%', trend: '+1%' },
+  jobsCompleted: { value: 23, trend: '+3%' },
+  materialUsage: { value: '14,500 lbs', trend: '+5%' },
+  laborHours: { value: 245, trend: '-2%' },
+  efficiencyRate: { value: '91%', trend: '+1%' },
 };
 
 export const recentJobs = [
-  { id: 'J-1001', client: 'ABC Corp', status: 'Completed', completion: 100, dueDate: '2025-07-01' },
-  { id: 'J-1002', client: 'XYZ Ltd', status: 'In Progress', completion: 75, dueDate: '2025-07-10' },
+  { id: 'FT-001', client: 'ABC Construction', status: 'Completed', completion: 100, dueDate: '2024-06-15' },
+  { id: 'FT-002', client: 'XYZ Fabricators', status: 'In Progress', completion: 80, dueDate: '2024-07-01' },
+  { id: 'FT-003', client: 'Big Steel', status: 'Pending', completion: 0, dueDate: '2024-08-05' },
 ];
 
 export const inventoryAlerts = [
-  { id: 'I-2001', item: 'Steel Beams', quantity: 5, threshold: 10, status: 'Critical' },
-  { id: 'I-2002', item: 'Bolts', quantity: 12, threshold: 15, status: 'Low' },
+  { id: 'INV-1', item: 'HSS 8x8x1/2', quantity: 2, threshold: 5, status: 'Critical' },
+  { id: 'INV-2', item: 'PL 1/2x12', quantity: 6, threshold: 10, status: 'Low' },
 ];
 
 export const monthlyProductionData = [
-  { month: 'Jan', production: 500 },
-  { month: 'Feb', production: 700 },
-  { month: 'Mar', production: 600 },
-  { month: 'Apr', production: 800 },
+  { month: 'Jan', production: 1200 },
+  { month: 'Feb', production: 1340 },
+  { month: 'Mar', production: 1580 },
+  { month: 'Apr', production: 1500 },
 ];
 
 export const jobStatusDistribution = [
-  { name: 'Completed', value: 60 },
-  { name: 'In Progress', value: 30 },
-  { name: 'Delayed', value: 10 },
+  { name: 'Completed', value: 5 },
+  { name: 'In Progress', value: 8 },
+  { name: 'Pending', value: 3 },
 ];
 
 

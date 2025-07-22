@@ -4,7 +4,6 @@ import { kpiData, recentJobs, inventoryAlerts, monthlyProductionData, jobStatusD
 const DashboardDataContext = createContext(null);
 
 export function DashboardDataProvider({ children }) {
-  // These will be shared across Dashboard and ImportData
   const [dashboardData, setDashboardData] = useState({
     kpiData,
     recentJobs,

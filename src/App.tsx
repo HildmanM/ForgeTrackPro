@@ -7,7 +7,7 @@ import InventoryModule from './components/inventory/InventoryModule';
 import ClientsModule from './components/clients/ClientsModule';
 import LaborModule from './components/labor/LaborModule';
 import ReportsModule from './components/reports/ReportsModule';
-import ImportData from './components/ImportData'; // Make sure this import matches your path!
+import ImportData from './components/ImportData';
 import { DashboardDataProvider } from './components/common/DashboardDataContext';
 
 const App: React.FC = () => {
@@ -31,6 +31,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
 
 

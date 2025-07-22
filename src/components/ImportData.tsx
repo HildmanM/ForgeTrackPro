@@ -1,6 +1,5 @@
 import React from "react";
 import { useDashboardData } from "./common/DashboardDataContext";
-// If you want to parse CSV, use a library like papaparse or a simple manual parser
 
 const ImportData: React.FC = () => {
   const { setDashboardData } = useDashboardData();
@@ -11,7 +10,6 @@ const ImportData: React.FC = () => {
     const reader = new FileReader();
     reader.onload = function (event) {
       try {
-        // Example: Expecting JSON for simplicity. If CSV, parse as needed!
         const parsed = JSON.parse(event.target?.result as string);
         setDashboardData(parsed);
         alert("Data imported! Go to Dashboard to see updated data.");
