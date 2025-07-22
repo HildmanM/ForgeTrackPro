@@ -1,42 +1,43 @@
-import React, { useState } from 'react';
-import { importFile } from '../services/api';
+import React from "react";
+import { useDashboardData } from "./common/DashboardDataContext";
+// If you want to parse CSV, use a library like papaparse or a simple manual parser
 
-export default function ImportData() {
-  const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState('');
-  const [text, setText] = useState('');
+const ImportData: React.FC = () => {
+  const { setDashboardData } = useDashboardData();
 
-  const onUpload = async () => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-    setStatus('Uploading...');
-    try {
-      const { data } = await importFile(file);
-      setText(data.text);
-      setStatus('File uploaded and parsed successfully.');
-    } catch {
-      setStatus('Upload failed.');
-    }
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        // Example: Expecting JSON for simplicity. If CSV, parse as needed!
+        const parsed = JSON.parse(event.target?.result as string);
+        setDashboardData(parsed);
+        alert("Data imported! Go to Dashboard to see updated data.");
+      } catch (err) {
+        alert("Invalid file format. Please upload a valid JSON file.");
+      }
+    };
+    reader.readAsText(file);
   };
 
   return (
-    <div>
-      <h1 className="text-2xl mb-4">Import Data</h1>
-      <input type="file" onChange={e => setFile(e.target.files?.[0]||null)} />
-      <button onClick={onUpload} className="ml-2 px-4 py-2 bg-blue-600 text-white rounded">
-        Upload
-      </button>
-      <div className={status.startsWith('Upload failed') ? 'text-red-500' : 'text-yellow-400'}>
-        {status}
-      </div>
-      {text && (
-        <>
-          <h2 className="mt-6 mb-2 text-xl">Imported Data</h2>
-          <pre className="bg-gray-800 p-4 rounded overflow-auto">{text}</pre>
-        </>
-      )}
+    <div className="p-8 bg-gray-900 text-white min-h-screen">
+      <h1 className="text-2xl font-bold mb-4">Import Data</h1>
+      <input
+        type="file"
+        accept=".json"
+        onChange={handleFileUpload}
+        className="bg-gray-800 p-2 rounded"
+      />
+      <p className="mt-4 text-gray-400">Upload a <b>JSON</b> file that matches your dashboard data structure to update all charts.</p>
     </div>
   );
-}
+};
+
+export default ImportData;
+
 
 
 

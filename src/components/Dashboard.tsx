@@ -1,36 +1,33 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-// … your KPICard imports …
+import React from 'react';
+import { CheckCircleIcon, ScaleIcon, ClockIcon, TrendingUpIcon, AlertTriangleIcon } from 'lucide-react';
+import KPICard from './common/KPICard';
+import { useDashboardData } from './common/DashboardDataContext';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
-export default function Dashboard() {
-  const [jobsCompleted, setJobsCompleted] = useState(0);
-  const [totalLabor, setTotalLabor]     = useState(0);
-
-  useEffect(() => {
-    axios.get("/api/jobs").then(r => setJobsCompleted(r.data.jobs.length));
-    axios.get("/api/labor").then(r => {
-      const sum = r.data.labor.reduce((acc, e) => acc + e.hours, 0);
-      setTotalLabor(sum);
-    });
-  }, []);
-
-  const kpis = [
-    { title: "Jobs Completed", value: jobsCompleted, /*…*/ },
-    { title: "Labor Hours",   value: totalLabor.toFixed(2), /*…*/ },
-    // material usage, efficiency… you can add more endpoints
-  ];
+const Dashboard = () => {
+  const { dashboardData } = useDashboardData();
+  const { kpiData, recentJobs, inventoryAlerts, monthlyProductionData, jobStatusDistribution } = dashboardData;
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid …">
-        {kpis.map((k,i) => (
-          <KPICard key={i} title={k.title} value={k.value} /*…*/ />
-        ))}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">ForgeTrack Dashboard</h1>
+        <div className="text-gray-400">Last updated: Today, 3:45 PM</div>
       </div>
-      {/* rest of your charts… */}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <KPICard title="Jobs Completed" value={kpiData.jobsCompleted.value} trend={kpiData.jobsCompleted.trend} icon={<CheckCircleIcon size={24} className="text-blue-400" />} color="blue" />
+        <KPICard title="Material Usage" value={kpiData.materialUsage.value} trend={kpiData.materialUsage.trend} icon={<ScaleIcon size={24} className="text-green-400" />} color="green" />
+        <KPICard title="Labor Hours" value={kpiData.laborHours.value} trend={kpiData.laborHours.trend} icon={<ClockIcon size={24} className="text-amber-400" />} color="amber" />
+        <KPICard title="Efficiency Rate" value={kpiData.efficiencyRate.value} trend={kpiData.efficiencyRate.trend} icon={<TrendingUpIcon size={24} className="text-blue-400" />} color="blue" />
+      </div>
+      {/* Charts and tables as before, using dashboardData fields */}
+      {/* ...rest of your Dashboard.tsx code unchanged... */}
     </div>
   );
-}
+};
+
+export default Dashboard;
 
 
