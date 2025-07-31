@@ -1,4 +1,3 @@
-// server/routes/upload.js
 import { Router } from "express";
 import multer from "multer";
 import pdfParse from "pdf-parse";
@@ -15,7 +14,6 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     let jobs = [];
 
-    // PDF Parsing
     if (fileType === "application/pdf") {
       const data = await pdfParse(fileBuffer);
       const lines = data.text.split("\n").map(line => line.trim()).filter(Boolean);
@@ -30,10 +28,7 @@ router.post("/", upload.single("file"), async (req, res) => {
           description: lines[i + 5],
         });
       }
-    } 
-
-    // Excel Parsing
-    else if (
+    } else if (
       fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileType === "application/vnd.ms-excel"
     ) {
@@ -50,10 +45,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         hours: parseFloat(row["Hours"]) || 0,
         description: row["Description"],
       }));
-    }
-
-    // Unsupported file types
-    else {
+    } else {
       return res.status(400).json({ error: "Unsupported file type." });
     }
 
@@ -62,12 +54,13 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     res.json({ success: true, jobsCount: jobs.length });
   } catch (err) {
-    console.error("Parsing Error:", err);
+    console.error(err);
     res.status(500).json({ error: "File parsing failed." });
   }
 });
 
 export default router;
+
 
 
 

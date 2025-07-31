@@ -30,3 +30,4 @@ export const fetchLabor = async () => {
   const response = await fetch(`${API_BASE_URL}/labor`);
   return response.json();
 };
+
