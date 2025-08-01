@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircleIcon, ScaleIcon, ClockIcon, TrendingUpIcon, AlertTriangleIcon } from 'lucide-react';
-import KPICard from './common/KPICard';
+import KPICard from '../common/KPICard';
 import FileUploader from './FileUploader';
 import { kpiData, recentJobs, inventoryAlerts, monthlyProductionData, jobStatusDistribution } from '../data/mockData';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
