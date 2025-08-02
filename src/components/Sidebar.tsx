@@ -1,58 +1,44 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboardIcon,
-  BriefcaseIcon,
-  PackageIcon,
-  UsersIcon,
-  ClockIcon,
-  BarChart3Icon,
-  MenuIcon,
-  UploadIcon
-} from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Boxes, Users, FileText, Upload, FileChart, Briefcase } from 'lucide-react';
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+const navItems = [
+  { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
+  { label: 'Jobs', path: '/jobs', icon: <Briefcase size={20} /> },
+  { label: 'Clients', path: '/clients', icon: <Users size={20} /> },
+  { label: 'Inventory', path: '/inventory', icon: <Boxes size={20} /> },
+  { label: 'Labor', path: '/labor', icon: <FileText size={20} /> },
+  { label: 'Reports', path: '/reports', icon: <FileChart size={20} /> },
+  { label: 'Import', path: '/import', icon: <Upload size={20} /> }
+];
 
-  const navItems = [
-    { path: '/', label: 'Dashboard', icon: <LayoutDashboardIcon size={20} /> },
-    { path: '/jobs', label: 'Jobs', icon: <BriefcaseIcon size={20} /> },
-    { path: '/inventory', label: 'Inventory', icon: <PackageIcon size={20} /> },
-    { path: '/clients', label: 'Clients', icon: <UsersIcon size={20} /> },
-    { path: '/labor', label: 'Labor Hours', icon: <ClockIcon size={20} /> },
-    { path: '/reports', label: 'Reports', icon: <BarChart3Icon size={20} /> },
-    { path: '/import', label: 'Import Data', icon: <UploadIcon size={20} /> }, // ✅ Added Import link
-  ];
+export default function Sidebar() {
+  const location = useLocation();
 
   return (
-    <aside className={`bg-gray-800 transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
-        {!collapsed && <div className="text-xl font-bold text-blue-400">ForgeTrack</div>}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1 rounded hover:bg-gray-700">
-          <MenuIcon size={20} />
-        </button>
+    <aside className="w-64 h-full bg-zinc-900 text-white flex flex-col shadow-xl">
+      <div className="text-2xl font-bold text-center py-6 border-b border-zinc-700">
+        ForgeTrack
       </div>
-      <nav className="py-4">
+      <nav className="flex-1 px-4 py-4 space-y-2">
         {navItems.map(item => (
-          <NavLink
+          <Link
             key={item.path}
             to={item.path}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 mb-1 transition-colors ${
-                isActive ? 'bg-blue-700 text-white' : 'text-gray-400 hover:bg-gray-700'
-              }`
-            }
+            className={`flex items-center px-4 py-2 rounded transition-colors ${
+              location.pathname === item.path
+                ? 'bg-zinc-800 text-white'
+                : 'text-zinc-300 hover:bg-zinc-800 hover:text-white'
+            }`}
           >
             <span className="mr-3">{item.icon}</span>
-            {!collapsed && <span>{item.label}</span>}
-          </NavLink>
+            {item.label}
+          </Link>
         ))}
       </nav>
     </aside>
   );
-};
+}
 
-export default Sidebar;
 
 
 
