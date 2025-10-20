@@ -1,18 +1,22 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './Layout';
-import Dashboard from './Dashboard';
-import Jobs from './Jobs';
-import Clients from './Clients';
-import Inventory from './Inventory';
-import Labor from './Labor';
-import Reports from './Reports';
-import ImportData from './ImportData';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "@/components/Layout";
+import Dashboard from "@/components/Dashboard";
 
-function App() {
+// simple placeholders so routes don’t crash if the files don’t exist yet
+const Page = (name: string) => () => <div className="text-zinc-300">{name}</div>;
+const Jobs = Page("Jobs");
+const Clients = Page("Clients");
+const Inventory = Page("Inventory");
+const Labor = Page("Labor");
+const Reports = Page("Reports");
+const ImportData = Page("Import Data");
+
+export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/clients" element={<Clients />} />
@@ -20,13 +24,12 @@ function App() {
           <Route path="/labor" element={<Labor />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/import" element={<ImportData />} />
-        </Route>
-      </Routes>
-    </Router>
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
 }
 
-export default App;
 
 
 
