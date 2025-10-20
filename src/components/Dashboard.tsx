@@ -1,101 +1,90 @@
-import React from 'react';
-import {
-  CheckCircleIcon,
-  ScaleIcon,
-  ClockIcon,
-  TrendingUpIcon,
-  AlertTriangleIcon,
-} from 'lucide-react';
-
-import KPICard from '@/components/common/KPICard';
+import React from "react";
+import { CheckCircle, Scale, Clock, TrendingUp, AlertTriangle } from "lucide-react";
+import KPICard from "@/components/common/KPICard";
 import {
   kpiData,
   recentJobs,
   inventoryAlerts,
   monthlyProductionData,
   jobStatusDistribution,
-} from '@/data/mockData';
-
+} from "@/data/mockData";
 import {
+  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   Legend,
-} from 'recharts';
+} from "recharts";
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
 const Dashboard: React.FC = () => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">ForgeTrack Dashboard</h1>
-        <div className="text-gray-400">Last updated: Today, 3:45 PM</div>
+      <div className="flex items-end justify-between">
+        <h1 className="text-2xl font-semibold text-white">ForgeTrack Dashboard</h1>
+        <div className="text-xs text-zinc-400">Last updated: just now</div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <KPICard
           title="Jobs Completed"
           value={kpiData.jobsCompleted.value}
-          trend={kpiData.jobsCompleted.trend}
-          icon={<CheckCircleIcon size={22} />}
+          trend={{ value: 3, direction: "up" }}
+          icon={<CheckCircle className="h-5 w-5" />}
           color="green"
         />
         <KPICard
-          title="On-Time Delivery"
-          value={`${kpiData.onTimeDelivery.value}%`}
-          trend={kpiData.onTimeDelivery.trend}
-          icon={<ClockIcon size={22} />}
+          title="Material Usage"
+          value={kpiData.materialUsage.value}
+          trend={{ value: 5, direction: "up" }}
+          icon={<Scale className="h-5 w-5" />}
           color="blue"
         />
         <KPICard
-          title="Avg. Hours/Job"
-          value={kpiData.avgHoursPerJob.value}
-          trend={kpiData.avgHoursPerJob.trend}
-          icon={<ScaleIcon size={22} />}
+          title="Labor Hours"
+          value={kpiData.laborHours.value}
+          trend={{ value: 2, direction: "down" }}
+          icon={<Clock className="h-5 w-5" />}
           color="amber"
         />
         <KPICard
-          title="Issues/Alerts"
-          value={kpiData.issues.value}
-          trend={kpiData.issues.trend}
-          icon={<AlertTriangleIcon size={22} />}
+          title="Efficiency Rate"
+          value={kpiData.efficiencyRate.value}
+          trend={{ value: 1, direction: "up" }}
+          icon={<TrendingUp className="h-5 w-5" />}
           color="red"
         />
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-300 font-semibold">Monthly Production (hrs)</div>
-            <TrendingUpIcon size={18} className="opacity-70" />
-          </div>
-          <div className="h-64">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="mb-3 text-sm text-zinc-300">Monthly Production (hrs)</div>
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyProductionData}>
-                <XAxis dataKey="month" stroke="#cbd5e1" />
-                <YAxis stroke="#cbd5e1" />
+                <XAxis dataKey="month" stroke="#a1a1aa" />
+                <YAxis stroke="#a1a1aa" />
                 <Tooltip />
-                <Bar dataKey="hours" />
+                <Bar dataKey="production" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
-          <div className="text-sm text-gray-300 font-semibold mb-2">Job Status Distribution</div>
-          <div className="h-64">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="mb-3 text-sm text-zinc-300">Job Status Distribution</div>
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={jobStatusDistribution} dataKey="value" nameKey="name" outerRadius={90}>
+                <Pie data={jobStatusDistribution} dataKey="value" nameKey="name" outerRadius={80} label>
                   {jobStatusDistribution.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
@@ -109,26 +98,34 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Recent Jobs & Inventory Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
-          <div className="text-sm text-gray-300 font-semibold mb-3">Recent Jobs</div>
-          <ul className="space-y-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="mb-3 flex items-center gap-2 text-sm text-zinc-300">
+            <Briefcase className="h-4 w-4" />
+            Recent Jobs
+          </div>
+          <ul className="space-y-2 text-sm text-zinc-200">
             {recentJobs.map((j) => (
-              <li key={j.id} className="flex justify-between text-sm text-gray-300">
-                <span className="font-medium">{j.name}</span>
-                <span className="text-gray-400">{j.status}</span>
+              <li key={j.id} className="flex items-center justify-between rounded-lg border border-zinc-800/60 bg-zinc-900/60 p-2">
+                <span className="font-medium">{j.id}</span>
+                <span className="text-zinc-400">{j.client}</span>
+                <span className="text-zinc-300">{j.status}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
-          <div className="text-sm text-gray-300 font-semibold mb-3">Low Stock Alerts</div>
-          <ul className="space-y-2">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="mb-3 flex items-center gap-2 text-sm text-zinc-300">
+            <AlertTriangle className="h-4 w-4" />
+            Low Stock Alerts
+          </div>
+          <ul className="space-y-2 text-sm text-zinc-200">
             {inventoryAlerts.map((a) => (
-              <li key={a.id} className="flex justify-between text-sm text-gray-300">
+              <li key={a.id} className="flex items-center justify-between rounded-lg border border-zinc-800/60 bg-zinc-900/60 p-2">
                 <span className="font-medium">{a.item}</span>
-                <span className="text-gray-400">Qty: {a.qty}</span>
+                <span className="text-zinc-300">Qty: {a.quantity}</span>
+                <span className="text-zinc-400">{a.status}</span>
               </li>
             ))}
           </ul>
@@ -139,6 +136,10 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+
+function Briefcase(props: React.SVGProps<SVGSVGElement>) {
+  return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z"/><path d="M14 7V5a2 2 0 00-2-2v0a2 2 0 00-2 2v2"/></svg>;
+}
 
 
 
