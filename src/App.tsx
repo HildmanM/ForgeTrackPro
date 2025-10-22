@@ -1,35 +1,31 @@
 import React from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
+import { AppProvider, useApp } from "@/store/appContext";
 import Dashboard from "@/pages/Dashboard";
 import Jobs from "@/pages/Jobs";
 import Clients from "@/pages/Clients";
 import Inventory from "@/pages/Inventory";
 import Labor from "@/pages/Labor";
 import Reports from "@/pages/Reports";
-import ImportData from "@/pages/ImportData"; // IMPORTANT: this exact path
-import { AppProvider, useApp } from "@/store/appContext";
-import { LayoutDashboard, Briefcase, Users, Boxes, FileText, Upload } from "lucide-react";
+import ImportData from "@/pages/ImportData";
 
 function Sidebar() {
   const { state } = useApp();
-  const counts = { jobs: state.jobs.length, clients: state.clients.length, inventory: state.inventory.length };
-  const Badge = ({ value }: { value: number }) => (
-    <span style={{ marginLeft: "auto", fontSize: 11, background:"#1a1a22", border:"1px solid #272733", padding:"2px 6px", borderRadius: 999 }}>
-      {value}
-    </span>
+  const Badge = ({ v }: { v: number }) => (
+    <span style={{ marginLeft: "auto", fontSize: 11, background: "#1a1a22",
+      border: "1px solid #272733", padding: "2px 6px", borderRadius: 999 }}>{v}</span>
   );
   return (
-    <aside className="aside">
-      <div className="brand">ForgeTrack</div>
-      <div className="small" style={{marginTop:4}}>Power BI–style dashboard</div>
-      <nav className="nav" style={{marginTop:16, display:"grid", gap:8}}>
-        <NavLink to="/" end className={({isActive})=> isActive?"active":undefined}><LayoutDashboard size={16}/> Dashboard</NavLink>
-        <NavLink to="/jobs" className={({isActive})=> isActive?"active":undefined}><Briefcase size={16}/> Jobs <Badge value={counts.jobs}/></NavLink>
-        <NavLink to="/clients" className={({isActive})=> isActive?"active":undefined}><Users size={16}/> Clients <Badge value={counts.clients}/></NavLink>
-        <NavLink to="/inventory" className={({isActive})=> isActive?"active":undefined}><Boxes size={16}/> Inventory <Badge value={counts.inventory}/></NavLink>
-        <NavLink to="/labor" className={({isActive})=> isActive?"active":undefined}><FileText size={16}/> Labor</NavLink>
-        <NavLink to="/reports" className={({isActive})=> isActive?"active":undefined}><FileText size={16}/> Reports</NavLink>
-        <NavLink to="/import" className={({isActive})=> isActive?"active":undefined}><Upload size={16}/> Import</NavLink>
+    <aside style={{ width: 240, padding: 16, borderRight: "1px solid #333" }}>
+      <div style={{ fontWeight: 700, marginBottom: 8 }}>ForgeTrack</div>
+      <nav style={{ display: "grid", gap: 8 }}>
+        <NavLink to="/" end>Dashboard</NavLink>
+        <NavLink to="/jobs">Jobs <Badge v={state.jobs.length}/></NavLink>
+        <NavLink to="/clients">Clients <Badge v={state.clients.length}/></NavLink>
+        <NavLink to="/inventory">Inventory <Badge v={state.inventory.length}/></NavLink>
+        <NavLink to="/labor">Labor</NavLink>
+        <NavLink to="/reports">Reports</NavLink>
+        <NavLink to="/import">Import</NavLink>
       </nav>
     </aside>
   );
@@ -38,9 +34,9 @@ function Sidebar() {
 export default function App() {
   return (
     <AppProvider>
-      <div className="fwrap">
+      <div style={{ display: "flex", minHeight: "100vh" }}>
         <Sidebar />
-        <main className="main">
+        <main style={{ flex: 1, padding: 16 }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/jobs" element={<Jobs />} />
@@ -48,13 +44,14 @@ export default function App() {
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/labor" element={<Labor />} />
             <Route path="/reports" element={<Reports />} />
-            <Route path="/import" element={<ImportData />} /> {/* MUST be this */}
+            <Route path="/import" element={<ImportData />} />
           </Routes>
         </main>
       </div>
     </AppProvider>
   );
 }
+
 
 
 
