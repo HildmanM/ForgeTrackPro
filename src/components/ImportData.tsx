@@ -3,14 +3,7 @@ import * as XLSX from "xlsx";
 import { useApp } from "@/store/appContext";
 import type { Client, InventoryItem, Job, KPI } from "@/types";
 
-type Mappings = {
-  jobId?: string;
-  client?: string;
-  status?: string;
-  hours?: string;
-  invItem?: string;
-  invQty?: string;
-};
+type Mappings = { jobId?: string; client?: string; status?: string; hours?: string; invItem?: string; invQty?: string; };
 
 export default function ImportData() {
   const { state, dispatch } = useApp();
@@ -19,14 +12,8 @@ export default function ImportData() {
   const [map, setMap] = useState<Mappings>({});
   const [log, setLog] = useState<string>("");
 
-  function append(msg: string) {
-    setLog((prev) => prev + msg + "\n");
-  }
-
-  function onMapChange(key: keyof Mappings, value: string) {
-    setMap((m) => ({ ...m, [key]: value || undefined }));
-  }
-
+  function append(msg: string) { setLog((p) => p + msg + "\n"); }
+  function onMapChange(key: keyof Mappings, value: string) { setMap((m) => ({ ...m, [key]: value || undefined })); }
   const preview = useMemo(() => rows.slice(0, 5), [rows]);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -52,10 +39,7 @@ export default function ImportData() {
   }
 
   function doImport() {
-    if (!rows.length) {
-      append("No rows to import.");
-      return;
-    }
+    if (!rows.length) { append("No rows to import."); return; }
 
     const jobs: Job[] = [];
     const clients: Client[] = [];
@@ -72,27 +56,17 @@ export default function ImportData() {
 
       if (jobId && client) {
         const hours = Number(hoursRaw);
-        jobs.push({
-          id: String(jobId),
-          client: String(client),
-          status: normalizeStatus(statusRaw ?? ""),
-          hours: Number.isFinite(hours) ? hours : undefined,
-        });
-        clients.push({ id: `C-${Math.random().toString(36).slice(2, 6)}`, name: String(client) });
+        jobs.push({ id: String(jobId), client: String(client), status: normalizeStatus(statusRaw ?? ""), hours: Number.isFinite(hours) ? hours : undefined });
+        clients.push({ id: `C-${Math.random().toString(36).slice(2,6)}`, name: String(client) });
       }
       if (item) {
         const qty = Number(qtyRaw);
-        inventory.push({
-          id: `${String(item).slice(0, 8)}-${Math.random().toString(36).slice(2, 6)}`,
-          item: String(item),
-          quantity: Number.isFinite(qty) ? qty : 0,
-          status: Number.isFinite(qty) && qty < 10 ? "Low" : "OK",
-        });
+        inventory.push({ id: `${String(item).slice(0,8)}-${Math.random().toString(36).slice(2,6)}`, item: String(item), quantity: Number.isFinite(qty) ? qty : 0, status: Number.isFinite(qty) && qty < 10 ? "Low" : "OK" });
       }
     }
 
     const totalJobs = jobs.length || state.jobs.length;
-    const lowStock = inventory.filter((i) => i.status === "Low").length;
+    const lowStock = inventory.filter(i => i.status === "Low").length;
     const scheduleCount = Math.max(12, Math.round(totalJobs / 2));
 
     const kpis: KPI[] = [
@@ -110,26 +84,16 @@ export default function ImportData() {
     append(`Imported ${jobs.length} jobs, ${clients.length} clients, ${inventory.length} inventory rows. KPIs updated.`);
   }
 
-  function resetAll() {
-    dispatch({ type: "RESET_ALL" });
-    append("State reset.");
-  }
+  function resetAll() { dispatch({ type: "RESET_ALL" }); append("State reset."); }
 
   return (
     <div className="card">
       <h3>Import Data (Excel/CSV)</h3>
-      <p className="small">
-        Select a file, then map columns to the fields below. Click Import to update KPIs, Jobs,
-        Clients, and Inventory.
-      </p>
+      <p className="small">Select a file, then map columns to the fields below. Click Import to update KPIs, Jobs, Clients, and Inventory.</p>
       <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
         <input type="file" accept=".xlsx,.xls,.csv" className="input" onChange={onFile} />
-        <button className="button" onClick={doImport}>
-          Import
-        </button>
-        <button className="button" onClick={resetAll}>
-          Reset
-        </button>
+        <button className="button" onClick={doImport}>Import</button>
+        <button className="button" onClick={resetAll}>Reset</button>
       </div>
 
       {headers.length > 0 && (
@@ -146,16 +110,14 @@ export default function ImportData() {
         </div>
       )}
 
-      {preview.length > 0 && (
+      {rows.length > 0 && (
         <div className="card" style={{ marginTop: 12 }}>
           <h3>Preview (first 5 rows)</h3>
           <div style={{ overflowX: "auto" }}>
             <table className="table">
-              <thead>
-                <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
-              </thead>
+              <thead><tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr></thead>
               <tbody>
-                {preview.map((r, i) => (
+                {rows.slice(0, 5).map((r, i) => (
                   <tr key={i}>{headers.map((h) => <td key={h}>{String(r[h])}</td>)}</tr>
                 ))}
               </tbody>
@@ -166,39 +128,26 @@ export default function ImportData() {
 
       <div className="card" style={{ marginTop: 12 }}>
         <h3>Log</h3>
-        <pre className="small" style={{ whiteSpace: "pre-wrap" }}>
-          {log || "Waiting for file..."}
-        </pre>
+        <pre className="small" style={{ whiteSpace: "pre-wrap" }}>{log || "Waiting for file..."}</pre>
       </div>
     </div>
   );
 }
 
 function FieldMap({
-  label,
-  value,
-  onChange,
-  headers,
-}: {
-  label: string;
-  value?: string;
-  onChange: (v: string) => void;
-  headers: string[];
-}) {
+  label, value, onChange, headers,
+}: { label: string; value?: string; onChange: (v: string) => void; headers: string[] }) {
   return (
     <label className="small" style={{ display: "grid", gap: 6 }}>
       {label}
       <select className="input" value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
         <option value="">— Not Mapped —</option>
-        {headers.map((h) => (
-          <option key={h} value={h}>
-            {h}
-          </option>
-        ))}
+        {headers.map((h) => <option key={h} value={h}>{h}</option>)}
       </select>
     </label>
   );
 }
+
 
 
 
