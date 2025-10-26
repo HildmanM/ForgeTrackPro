@@ -1,43 +1,71 @@
-import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Boxes, Users, FileText, Upload, FileChart, Briefcase } from 'lucide-react';
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard as DashboardIcon,
+  Briefcase as BriefcaseIcon,
+  Package as PackageIcon,
+  Users as UsersIcon,
+  Clock as ClockIcon,
+  BarChart3 as BarChart3Icon,
+  Upload as UploadIcon
+} from "lucide-react";
 
-const navItems = [
-  { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
-  { label: 'Jobs', path: '/jobs', icon: <Briefcase size={20} /> },
-  { label: 'Clients', path: '/clients', icon: <Users size={20} /> },
-  { label: 'Inventory', path: '/inventory', icon: <Boxes size={20} /> },
-  { label: 'Labor', path: '/labor', icon: <FileText size={20} /> },
-  { label: 'Reports', path: '/reports', icon: <FileChart size={20} /> },
-  { label: 'Import', path: '/import', icon: <Upload size={20} /> }
-];
+const Sidebar: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
 
-export default function Sidebar() {
-  const location = useLocation();
+  const navItems = [
+    { to: "/", label: "Dashboard", icon: <DashboardIcon size={18} /> },
+    { to: "/jobs", label: "Jobs", icon: <BriefcaseIcon size={18} /> },
+    { to: "/inventory", label: "Inventory", icon: <PackageIcon size={18} /> },
+    { to: "/clients", label: "Clients", icon: <UsersIcon size={18} /> },
+    { to: "/labor", label: "Labor", icon: <ClockIcon size={18} /> },
+    { to: "/reports", label: "Reports", icon: <BarChart3Icon size={18} /> },
+    { to: "/import", label: "Import Data", icon: <UploadIcon size={18} /> }
+  ];
 
   return (
-    <aside className="w-64 h-full bg-zinc-900 text-white flex flex-col shadow-xl">
-      <div className="text-2xl font-bold text-center py-6 border-b border-zinc-700">
-        ForgeTrack
+    <aside
+      className={`bg-black text-white h-screen flex flex-col border-r border-gray-800 ${
+        collapsed ? "w-16" : "w-60"
+      } transition-all duration-200`}
+    >
+      <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
+        {!collapsed && (
+          <span className="text-lg font-bold text-white tracking-wide">
+            ForgeTrack
+          </span>
+        )}
+        <button
+          className="text-gray-400 hover:text-white"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          ☰
+        </button>
       </div>
-      <nav className="flex-1 px-4 py-4 space-y-2">
+
+      <nav className="flex-1 p-3 space-y-1 text-sm">
         {navItems.map(item => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center px-4 py-2 rounded transition-colors ${
-              location.pathname === item.path
-                ? 'bg-zinc-800 text-white'
-                : 'text-zinc-300 hover:bg-zinc-800 hover:text-white'
-            }`}
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === "/"}
+            className={({ isActive }) =>
+              `flex items-center rounded-md px-3 py-2 hover:bg-gray-800 ${
+                isActive ? "bg-gray-900 text-white font-semibold" : "text-gray-300"
+              }`
+            }
           >
             <span className="mr-3">{item.icon}</span>
-            {item.label}
-          </Link>
+            {!collapsed && <span>{item.label}</span>}
+          </NavLink>
         ))}
       </nav>
     </aside>
   );
-}
+};
+
+export default Sidebar;
+
 
 
 

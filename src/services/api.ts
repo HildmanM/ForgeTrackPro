@@ -1,18 +1,46 @@
-import axios from 'axios';
-const API = import.meta.env.VITE_API_URL || 'https://forge-backend-1jaq.onrender.com';
+export const API_BASE =
+  import.meta.env.VITE_API_URL?.replace(/\/+$/, "") ||
+  "http://localhost:5000";
 
-export function importFile(file: File) {
-  const form = new FormData();
-  form.append('file', file);
-  return axios.post<{ text: string }>(
-    `${API}/api/import`,
-    form,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
-  );
+async function getJson(url: string) {
+  const res = await fetch(url, { credentials: "omit" });
+  if (!res.ok) throw new Error(`GET ${url} failed`);
+  return res.json();
 }
 
-export function listJobs() {
-  return axios.get<{ jobs: any[] }>(`${API}/api/jobs`);
+export function fetchKpis() {
+  return getJson(`${API_BASE}/api/kpis`);
 }
+
+export function fetchJobs() {
+  return getJson(`${API_BASE}/api/jobs`);
+}
+
+export function fetchInventory() {
+  return getJson(`${API_BASE}/api/inventory`);
+}
+
+export function fetchClients() {
+  return getJson(`${API_BASE}/api/clients`);
+}
+
+export function fetchLabor() {
+  return getJson(`${API_BASE}/api/labor`);
+}
+
+export async function uploadFiles(files: File[]) {
+  const fd = new FormData();
+  files.forEach(f => fd.append("files", f, f.name));
+  const res = await fetch(`${API_BASE}/api/upload`, {
+    method: "POST",
+    body: fd
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(txt || "upload failed");
+  }
+  return res.json();
+}
+
 
 

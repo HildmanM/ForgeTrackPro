@@ -1,37 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { fetchClients } from "../../services/api";
 
-const clients = [
-  { id: 'C-001', name: 'Alpha Steel', contact: 'John Doe', phone: '555-1234' },
-  { id: 'C-002', name: 'Beta Fabrication', contact: 'Jane Smith', phone: '555-5678' },
-  { id: 'C-003', name: 'Gamma Works', contact: 'Alan Johnson', phone: '555-9012' },
-];
+const ClientsModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
 
-const ClientsModule = () => {
+  useEffect(() => {
+    fetchClients()
+      .then(setRows)
+      .catch(console.error);
+  }, []);
+
   return (
-    <div className="text-white p-6 space-y-4">
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold">Clients</h1>
-      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-        <thead>
-          <tr className="bg-gray-700 text-gray-300">
-            <th className="p-3 text-left">Client ID</th>
-            <th className="p-3 text-left">Name</th>
-            <th className="p-3 text-left">Contact</th>
-            <th className="p-3 text-left">Phone</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clients.map((client) => (
-            <tr key={client.id} className="border-t border-gray-700 hover:bg-gray-700">
-              <td className="p-3">{client.id}</td>
-              <td className="p-3">{client.name}</td>
-              <td className="p-3">{client.contact}</td>
-              <td className="p-3">{client.phone}</td>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-700 bg-gray-800">
+        <table className="min-w-full text-sm text-gray-200">
+          <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
+            <tr>
+              <th className="px-4 py-2 text-left">Client</th>
+              <th className="px-4 py-2 text-left">Email</th>
+              <th className="px-4 py-2 text-left">Phone</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((c, i) => (
+              <tr
+                key={i}
+                className={i % 2 ? "bg-gray-800" : "bg-gray-700/40"}
+              >
+                <td className="px-4 py-2">{c.name}</td>
+                <td className="px-4 py-2">{c.email}</td>
+                <td className="px-4 py-2">{c.phone}</td>
+              </tr>
+            ))}
+
+            {!rows.length && (
+              <tr>
+                <td
+                  className="px-4 py-4 text-center text-gray-500"
+                  colSpan={3}
+                >
+                  No clients yet. Import data.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
 export default ClientsModule;
+

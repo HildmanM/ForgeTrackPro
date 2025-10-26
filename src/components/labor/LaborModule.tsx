@@ -1,42 +1,63 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { fetchLabor } from "../../services/api";
 
-const laborRecords = [
-  { id: 'L-001', employee: 'John Carter', job: 'J-101', hours: 8, date: '2025-06-28' },
-  { id: 'L-002', employee: 'Samantha Ray', job: 'J-102', hours: 6.5, date: '2025-06-28' },
-  { id: 'L-003', employee: 'Mike Lee', job: 'J-103', hours: 7, date: '2025-06-27' },
-];
+const LaborModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
 
-const LaborModule = () => {
+  useEffect(() => {
+    fetchLabor()
+      .then(setRows)
+      .catch(console.error);
+  }, []);
+
   return (
-    <div className="text-white p-6 space-y-4">
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold">Labor Hours</h1>
-      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-        <thead>
-          <tr className="bg-gray-700 text-gray-300">
-            <th className="p-3 text-left">Record ID</th>
-            <th className="p-3 text-left">Employee</th>
-            <th className="p-3 text-left">Job</th>
-            <th className="p-3 text-left">Hours</th>
-            <th className="p-3 text-left">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {laborRecords.map((rec) => (
-            <tr key={rec.id} className="border-t border-gray-700 hover:bg-gray-700">
-              <td className="p-3">{rec.id}</td>
-              <td className="p-3">{rec.employee}</td>
-              <td className="p-3">{rec.job}</td>
-              <td className="p-3">{rec.hours}</td>
-              <td className="p-3">{rec.date}</td>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-700 bg-gray-800">
+        <table className="min-w-full text-sm text-gray-200">
+          <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
+            <tr>
+              <th className="px-4 py-2 text-left">Job #</th>
+              <th className="px-4 py-2 text-left">Seq</th>
+              <th className="px-4 py-2 text-left">Employee</th>
+              <th className="px-4 py-2 text-left">Hours</th>
+              <th className="px-4 py-2 text-left">Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr
+                key={i}
+                className={i % 2 ? "bg-gray-800" : "bg-gray-700/40"}
+              >
+                <td className="px-4 py-2">{r.jobNumber}</td>
+                <td className="px-4 py-2">{r.seq}</td>
+                <td className="px-4 py-2">{r.employee}</td>
+                <td className="px-4 py-2">{r.hours}</td>
+                <td className="px-4 py-2">{r.date}</td>
+              </tr>
+            ))}
+
+            {!rows.length && (
+              <tr>
+                <td
+                  className="px-4 py-4 text-center text-gray-500"
+                  colSpan={5}
+                >
+                  No labor hours yet. Import data.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
 export default LaborModule;
+
 
 
 

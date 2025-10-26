@@ -1,59 +1,56 @@
-import { useEffect, useState } from 'react';
-import KPICard from './KPICard';
-import Chart from './Chart';
-import JobTable from './JobTable';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { fetchKpis } from "../services/api";
 
-type ExcelRow = {
-  [key: string]: string | number;
-};
+const Card = ({
+  label,
+  value
+}: {
+  label: string;
+  value: string | number | undefined;
+}) => (
+  <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg">
+    <div className="text-xs uppercase tracking-wide text-gray-400 mb-1">
+      {label}
+    </div>
+    <div className="text-3xl font-semibold text-white">{value ?? "-"}</div>
+  </div>
+);
 
-export default function Dashboard() {
-  const [parsedData, setParsedData] = useState<ExcelRow[]>([]);
-  const [pdfText, setPdfText] = useState('');
+const Dashboard: React.FC = () => {
+  const [kpis, setKpis] = useState<any | null>(null);
 
   useEffect(() => {
-    axios.get('/uploads/lastParsed.json')
-      .then(res => {
-        if (res.data.type === 'excel') {
-          setParsedData(res.data.data);
-        } else if (res.data.type === 'pdf') {
-          setPdfText(res.data.data);
-        }
-      })
-      .catch(() => setParsedData([]));
+    fetchKpis().then(setKpis).catch(console.error);
   }, []);
 
-  const totalJobs = parsedData.length;
-  const jobNames = parsedData.map(row => row['Job Name'] || row['Job'] || 'Unknown');
-  const uniqueClients = new Set(parsedData.map(row => row['Client'] || 'Client')).size;
-  const inventoryItems = parsedData.length;
-  const totalHours = parsedData.reduce((sum, row) => {
-    const val = typeof row['Hours'] === 'number' ? row['Hours'] : parseFloat(row['Hours'] as string);
-    return sum + (isNaN(val) ? 0 : val);
-  }, 0);
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="Total Jobs" value={totalJobs.toString()} />
-        <KPICard title="Unique Clients" value={uniqueClients.toString()} />
-        <KPICard title="Inventory Items" value={inventoryItems.toString()} />
-        <KPICard title="Total Hours" value={totalHours.toFixed(2)} />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Chart data={parsedData} />
-        <JobTable data={parsedData} />
-      </div>
-      {pdfText && (
-        <div className="bg-zinc-800 p-4 rounded shadow text-white whitespace-pre-wrap">
-          <h2 className="text-xl font-semibold mb-2">Parsed PDF Text</h2>
-          {pdfText}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">ForgeTrack Dashboard</h1>
+        <div className="text-xs text-gray-400">
+          Live data from uploaded files
         </div>
-      )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card label="Jobs" value={kpis?.totalJobs} />
+        <Card label="Jobs Completed" value={kpis?.jobsCompleted} />
+        <Card label="Clients" value={kpis?.totalClients} />
+        <Card label="Labor Hours" value={kpis?.totalLaborHours} />
+      </div>
+
+      <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg text-sm text-gray-300">
+        <p>
+          Import new Tekla / Excel / PDF data on the{" "}
+          <span className="text-white font-semibold">Import Data</span> page.
+          The dashboard and all pages update automatically.
+        </p>
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
 
 
 

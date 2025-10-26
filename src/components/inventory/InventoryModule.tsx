@@ -1,35 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { fetchInventory } from "../../services/api";
 
-const inventory = [
-  { id: 'I-001', item: 'H-Beams', quantity: 3, location: 'Yard A' },
-  { id: 'I-002', item: 'Rebar', quantity: 8, location: 'Yard B' },
-  { id: 'I-003', item: 'Steel Plates', quantity: 15, location: 'Shop Floor' },
-];
+const InventoryModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
 
-const InventoryModule = () => {
+  useEffect(() => {
+    fetchInventory()
+      .then(setRows)
+      .catch(console.error);
+  }, []);
+
   return (
-    <div className="text-white p-6 space-y-4">
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold">Inventory</h1>
-      <table className="w-full table-auto bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-        <thead>
-          <tr className="bg-gray-700 text-gray-300">
-            <th className="p-3 text-left">Item ID</th>
-            <th className="p-3 text-left">Item</th>
-            <th className="p-3 text-left">Quantity</th>
-            <th className="p-3 text-left">Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inventory.map((inv) => (
-            <tr key={inv.id} className="border-t border-gray-700 hover:bg-gray-700">
-              <td className="p-3">{inv.id}</td>
-              <td className="p-3">{inv.item}</td>
-              <td className="p-3">{inv.quantity}</td>
-              <td className="p-3">{inv.location}</td>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-700 bg-gray-800">
+        <table className="min-w-full text-sm text-gray-200">
+          <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
+            <tr>
+              <th className="px-4 py-2 text-left">SKU</th>
+              <th className="px-4 py-2 text-left">Part Mark</th>
+              <th className="px-4 py-2 text-left">Qty</th>
+              <th className="px-4 py-2 text-left">Location</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr
+                key={i}
+                className={i % 2 ? "bg-gray-800" : "bg-gray-700/40"}
+              >
+                <td className="px-4 py-2">{r.sku}</td>
+                <td className="px-4 py-2">{r.partMark}</td>
+                <td className="px-4 py-2">{r.qty}</td>
+                <td className="px-4 py-2">{r.location}</td>
+              </tr>
+            ))}
+
+            {!rows.length && (
+              <tr>
+                <td
+                  className="px-4 py-4 text-center text-gray-500"
+                  colSpan={4}
+                >
+                  No inventory yet. Import data.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

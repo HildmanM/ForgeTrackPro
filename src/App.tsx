@@ -1,32 +1,35 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './Layout';
-import Dashboard from './Dashboard';
-import Jobs from './Jobs';
-import Clients from './Clients';
-import Inventory from './Inventory';
-import Labor from './Labor';
-import Reports from './Reports';
-import ImportData from './ImportData';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 
-function App() {
+import Dashboard from "./components/Dashboard";
+import JobsModule from "./components/jobs/JobsModule";
+import InventoryModule from "./components/inventory/InventoryModule";
+import ClientsModule from "./components/clients/ClientsModule";
+import LaborModule from "./components/labor/LaborModule";
+import ReportsModule from "./components/reports/ReportsModule";
+import ImportData from "./components/ImportData";
+
+const App: React.FC = () => {
   return (
     <Router>
-      <Routes>
-        <Route element={<Layout />}>
+      <Layout>
+        <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/labor" element={<Labor />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/jobs" element={<JobsModule />} />
+          <Route path="/inventory" element={<InventoryModule />} />
+          <Route path="/clients" element={<ClientsModule />} />
+          <Route path="/labor" element={<LaborModule />} />
+          <Route path="/reports" element={<ReportsModule />} />
           <Route path="/import" element={<ImportData />} />
-        </Route>
-      </Routes>
+        </Routes>
+      </Layout>
     </Router>
   );
-}
+};
 
 export default App;
+
 
 
 

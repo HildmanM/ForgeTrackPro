@@ -1,45 +1,58 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchJobs } from "../../services/api";
 
-interface Job {
-  stationDate: string;
-  stationName: string;
-  employee: string;
-  dateCompleted: string;
-  hours: number;
-  description: string;
-}
-
-export default function JobsModule() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+const JobsModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
 
   useEffect(() => {
-    axios.get("/api/jobs")
-      .then(res => setJobs(res.data.jobs))
+    fetchJobs()
+      .then(setRows)
       .catch(console.error);
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Jobs</h1>
-      <table className="min-w-full bg-gray-800 text-white">
-        <thead>…</thead>
-        <tbody>
-          {jobs.map((j,i) => (
-            <tr key={i}>
-              <td>{j.stationDate}</td>
-              <td>{j.stationName}</td>
-              <td>{j.employee}</td>
-              <td>{j.dateCompleted}</td>
-              <td>{j.hours.toFixed(2)}</td>
-              <td>{j.description}</td>
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">Jobs</h1>
+      <div className="overflow-x-auto rounded-lg border border-gray-700 bg-gray-800">
+        <table className="min-w-full text-sm text-gray-200">
+          <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
+            <tr>
+              <th className="px-4 py-2 text-left">Job #</th>
+              <th className="px-4 py-2 text-left">Name</th>
+              <th className="px-4 py-2 text-left">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((j, i) => (
+              <tr
+                key={i}
+                className={i % 2 ? "bg-gray-800" : "bg-gray-700/40"}
+              >
+                <td className="px-4 py-2">{j.jobNumber}</td>
+                <td className="px-4 py-2">{j.name}</td>
+                <td className="px-4 py-2">{j.status}</td>
+              </tr>
+            ))}
+
+            {!rows.length && (
+              <tr>
+                <td
+                  className="px-4 py-4 text-center text-gray-500"
+                  colSpan={3}
+                >
+                  No jobs yet. Import data.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-}
+};
+
+export default JobsModule;
+
 
 
 
