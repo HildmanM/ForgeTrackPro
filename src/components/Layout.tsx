@@ -1,17 +1,14 @@
 import React from "react";
 import Sidebar from "./Sidebar";
 
-type LayoutProps = { children: React.ReactNode };
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
-      </div>
+    <div className="flex h-screen w-full bg-gray-900 text-white">
+      <Sidebar />
+      <main className="flex-1 overflow-auto p-6">{children}</main>
     </div>
   );
 };
 
 export default Layout;
+

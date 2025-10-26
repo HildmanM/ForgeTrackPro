@@ -1,28 +1,58 @@
-import React from "react";
-import { useApp } from "@/store/appContext";
+import React, { useEffect, useState } from "react";
+import { fetchKpis } from "../services/api";
 
-export default function Dashboard() {
-  const { state } = useApp();
+const Card = ({
+  label,
+  value
+}: {
+  label: string;
+  value: string | number | undefined;
+}) => (
+  <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg">
+    <div className="text-xs uppercase tracking-wide text-gray-400 mb-1">
+      {label}
+    </div>
+    <div className="text-3xl font-semibold text-white">{value ?? "-"}</div>
+  </div>
+);
+
+const Dashboard: React.FC = () => {
+  const [kpis, setKpis] = useState<any | null>(null);
+
+  useEffect(() => {
+    fetchKpis().then(setKpis).catch(console.error);
+  }, []);
+
   return (
-    <div>
-      <h2>Dashboard</h2>
-      <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(4, 1fr)" }}>
-        {state.kpis.map((k, i) => (
-          <div key={i} style={{ border: "1px solid #333", borderRadius: 10, padding: 12 }}>
-            <div style={{ color: "#a8a8b3", fontSize: 13 }}>{k.title}</div>
-            <div style={{ fontSize: 26, fontWeight: 700 }}>{k.value.toLocaleString()}</div>
-            {typeof k.delta === "number" && (
-              <div style={{ fontSize: 12, color: k.delta >= 0 ? "#23c55e" : "#ef4444" }}>
-                {k.delta >= 0 ? "▲ " : "▼ "}
-                {Math.abs(k.delta).toFixed(1)}%
-              </div>
-            )}
-          </div>
-        ))}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">ForgeTrack Dashboard</h1>
+        <div className="text-xs text-gray-400">
+          Live data from uploaded files
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card label="Jobs" value={kpis?.totalJobs} />
+        <Card label="Jobs Completed" value={kpis?.jobsCompleted} />
+        <Card label="Clients" value={kpis?.totalClients} />
+        <Card label="Labor Hours" value={kpis?.totalLaborHours} />
+      </div>
+
+      <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 shadow-lg text-sm text-gray-300">
+        <p>
+          Import new Tekla / Excel / PDF data on the{" "}
+          <span className="text-white font-semibold">Import Data</span> page.
+          The dashboard and all pages update automatically.
+        </p>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
+
+
 
 
 

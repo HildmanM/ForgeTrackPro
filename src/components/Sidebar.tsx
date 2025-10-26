@@ -1,46 +1,71 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Boxes, Users, FileText, Upload } from "lucide-react";
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard as DashboardIcon,
+  Briefcase as BriefcaseIcon,
+  Package as PackageIcon,
+  Users as UsersIcon,
+  Clock as ClockIcon,
+  BarChart3 as BarChart3Icon,
+  Upload as UploadIcon
+} from "lucide-react";
 
-const navItems = [
-  { label: "Dashboard", path: "/", icon: <LayoutDashboard className="h-4 w-4" /> },
-  { label: "Jobs", path: "/jobs", icon: <Briefcase className="h-4 w-4" /> },
-  { label: "Clients", path: "/clients", icon: <Users className="h-4 w-4" /> },
-  { label: "Inventory", path: "/inventory", icon: <Boxes className="h-4 w-4" /> },
-  { label: "Labor", path: "/labor", icon: <FileText className="h-4 w-4" /> },
-  { label: "Reports", path: "/reports", icon: <FileText className="h-4 w-4" /> },
-  { label: "Import", path: "/import", icon: <Upload className="h-4 w-4" /> },
-];
+const Sidebar: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
 
-export default function Sidebar() {
-  const location = useLocation();
+  const navItems = [
+    { to: "/", label: "Dashboard", icon: <DashboardIcon size={18} /> },
+    { to: "/jobs", label: "Jobs", icon: <BriefcaseIcon size={18} /> },
+    { to: "/inventory", label: "Inventory", icon: <PackageIcon size={18} /> },
+    { to: "/clients", label: "Clients", icon: <UsersIcon size={18} /> },
+    { to: "/labor", label: "Labor", icon: <ClockIcon size={18} /> },
+    { to: "/reports", label: "Reports", icon: <BarChart3Icon size={18} /> },
+    { to: "/import", label: "Import Data", icon: <UploadIcon size={18} /> }
+  ];
+
   return (
-    <aside className="hidden w-60 shrink-0 border-r border-zinc-800 bg-zinc-900/40 p-4 md:block">
-      <div className="mb-6 text-lg font-semibold">ForgeTrack</div>
-      <nav className="space-y-1">
-        {navItems.map((item) => {
-          const active = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-zinc-800/60 ${
-                active ? "bg-zinc-800/70 text-white" : "text-zinc-300"
-              }`}
-              to={item.path}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
+    <aside
+      className={`bg-black text-white h-screen flex flex-col border-r border-gray-800 ${
+        collapsed ? "w-16" : "w-60"
+      } transition-all duration-200`}
+    >
+      <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
+        {!collapsed && (
+          <span className="text-lg font-bold text-white tracking-wide">
+            ForgeTrack
+          </span>
+        )}
+        <button
+          className="text-gray-400 hover:text-white"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          ☰
+        </button>
+      </div>
+
+      <nav className="flex-1 p-3 space-y-1 text-sm">
+        {navItems.map(item => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === "/"}
+            className={({ isActive }) =>
+              `flex items-center rounded-md px-3 py-2 hover:bg-gray-800 ${
+                isActive ? "bg-gray-900 text-white font-semibold" : "text-gray-300"
+              }`
+            }
+          >
+            <span className="mr-3">{item.icon}</span>
+            {!collapsed && <span>{item.label}</span>}
+          </NavLink>
+        ))}
       </nav>
     </aside>
   );
-}
+};
 
-function Briefcase(props: React.SVGProps<SVGSVGElement>) {
-  return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z"/><path d="M14 7V5a2 2 0 00-2-2v0a2 2 0 00-2 2v2"/></svg>;
-}
+export default Sidebar;
+
 
 
 
