@@ -4,8 +4,16 @@ import path from 'path';
 import fs from 'fs';
 import xlsx from 'xlsx';
 import pdfParse from 'pdf-parse-fixed';
+import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
+
+// Limit uploads to 10 per IP per 15 minutes
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit of upload requests per windowMs
+  message: { message: 'Too many uploads from this IP, please try again after 15 minutes.' }
+});
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, 'uploads/'),
@@ -18,7 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post('/api/upload', upload.single('file'), async (req, res) => {
+router.post('/api/upload', uploadLimiter, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded.' });
 
   const ext = path.extname(req.file.originalname).toLowerCase();
