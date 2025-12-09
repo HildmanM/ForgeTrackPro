@@ -25,9 +25,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={`bg-black text-white h-screen flex flex-col border-r border-gray-800 ${
-        collapsed ? "w-16" : "w-60"
-      } transition-all duration-200`}
+      className={`bg-black text-white h-screen flex flex-col border-r border-gray-800 ${collapsed ? "w-16" : "w-60"
+        } transition-all duration-200`}
     >
       <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
         {!collapsed && (
@@ -50,8 +49,7 @@ const Sidebar: React.FC = () => {
             to={item.to}
             end={item.to === "/"}
             className={({ isActive }) =>
-              `flex items-center rounded-md px-3 py-2 hover:bg-gray-800 ${
-                isActive ? "bg-gray-900 text-white font-semibold" : "text-gray-300"
+              `flex items-center rounded-md px-3 py-2 hover:bg-gray-800 ${isActive ? "bg-gray-900 text-white font-semibold" : "text-gray-300"
               }`
             }
           >
@@ -62,11 +60,7 @@ const Sidebar: React.FC = () => {
       </nav>
     </aside>
   );
-};
-
-export default Sidebar;
-
-
+}
 
 
 

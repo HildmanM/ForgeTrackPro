@@ -49,12 +49,7 @@ const JobsModule: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default JobsModule;
-
-
-
+}
 
 
 

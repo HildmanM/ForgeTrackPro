@@ -57,3 +57,6 @@ const LaborModule: React.FC = () => {
 };
 
 export default LaborModule;
+
+
+
