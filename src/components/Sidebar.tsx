@@ -7,7 +7,9 @@ import {
   Users as UsersIcon,
   Clock as ClockIcon,
   BarChart3 as BarChart3Icon,
-  Upload as UploadIcon
+  Upload as UploadIcon,
+  DollarSign as DollarSignIcon,
+  Calendar as CalendarIcon
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
@@ -15,6 +17,8 @@ const Sidebar: React.FC = () => {
 
   const navItems = [
     { to: "/", label: "Dashboard", icon: <DashboardIcon size={18} /> },
+    { to: "/bids", label: "Estimating", icon: <DollarSignIcon size={18} /> },
+    { to: "/schedule", label: "Schedule", icon: <CalendarIcon size={18} /> },
     { to: "/jobs", label: "Jobs", icon: <BriefcaseIcon size={18} /> },
     { to: "/inventory", label: "Inventory", icon: <PackageIcon size={18} /> },
     { to: "/clients", label: "Clients", icon: <UsersIcon size={18} /> },

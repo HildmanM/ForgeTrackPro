@@ -9,6 +9,8 @@ import ClientsModule from "./components/clients/ClientsModule";
 import LaborModule from "./components/labor/LaborModule";
 import ReportsModule from "./components/reports/ReportsModule";
 import ImportData from "./components/ImportData";
+import BidsModule from "./components/bids/BidsModule";
+import ScheduleModule from "./components/schedule/ScheduleModule";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +18,8 @@ const App: React.FC = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/bids" element={<BidsModule />} />
+          <Route path="/schedule" element={<ScheduleModule />} />
           <Route path="/jobs" element={<JobsModule />} />
           <Route path="/inventory" element={<InventoryModule />} />
           <Route path="/clients" element={<ClientsModule />} />
