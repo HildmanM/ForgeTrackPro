@@ -51,6 +51,9 @@ const JobsModule: React.FC = () => {
   );
 }
 
+export default JobsModule;
+
+
 
 
 
