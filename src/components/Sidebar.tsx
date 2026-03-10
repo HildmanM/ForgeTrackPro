@@ -27,26 +27,36 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className={`bg-gray-800 transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
-        {!collapsed && <div className="text-xl font-bold text-blue-400">ForgeTrack</div>}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1 rounded hover:bg-gray-700">
+    <aside className={`transition-all duration-500 ease-in-out border-r border-slate-700/50 bg-slate-900/50 backdrop-blur-xl ${collapsed ? 'w-20' : 'w-72'}`}>
+      <div className="flex items-center justify-between h-20 px-6 border-b border-slate-700/50">
+        {!collapsed && (
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center shadow-lg shadow-sky-500/20">
+              <PackageIcon size={18} className="text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              ForgeTrack
+            </span>
+          </div>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="p-2 rounded-xl hover:bg-slate-800/80 text-slate-400 hover:text-white transition-all duration-200"
+        >
           <MenuIcon size={20} />
         </button>
       </div>
-      <nav className="py-4">
+      <nav className="p-4 space-y-1">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 mb-1 transition-colors ${
-                isActive ? 'bg-blue-700 text-white' : 'text-gray-400 hover:bg-gray-700'
-              }`
+              `nav-item ${isActive ? 'active' : ''} ${collapsed ? 'justify-center !px-0' : ''}`
             }
           >
-            <span className="mr-3">{item.icon}</span>
-            {!collapsed && <span>{item.label}</span>}
+            <span className={`${collapsed ? '' : 'flex-shrink-0'}`}>{item.icon}</span>
+            {!collapsed && <span className="font-medium tracking-wide">{item.label}</span>}
           </NavLink>
         ))}
       </nav>
