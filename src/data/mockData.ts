@@ -1,33 +1,32 @@
-// src/data/mockData.ts
 export const kpiData = {
-  jobsCompleted: { value: 128, trend: '+8%' },
-  materialUsage: { value: '5.6 tons', trend: '-2%' },
-  laborHours: { value: 1342, trend: '+5%' },
-  efficiencyRate: { value: '92%', trend: '+4%' }
+  jobsCompleted: { value: 23, trend: '+3%' },
+  materialUsage: { value: '14,500 lbs', trend: '+5%' },
+  laborHours: { value: 245, trend: '-2%' },
+  efficiencyRate: { value: '91%', trend: '+1%' },
 };
 
 export const recentJobs = [
-  { id: 'J-101', client: 'Alpha Steel', status: 'Completed', completion: 100, dueDate: '2025-06-25' },
-  { id: 'J-102', client: 'Beta Fabrication', status: 'In Progress', completion: 75, dueDate: '2025-07-02' },
-  { id: 'J-103', client: 'Gamma Works', status: 'Pending', completion: 0, dueDate: '2025-07-10' }
+  { id: 'FT-001', client: 'ABC Construction', status: 'Completed', completion: 100, dueDate: '2024-06-15' },
+  { id: 'FT-002', client: 'XYZ Fabricators', status: 'In Progress', completion: 80, dueDate: '2024-07-01' },
+  { id: 'FT-003', client: 'Big Steel', status: 'Pending', completion: 0, dueDate: '2024-08-05' },
 ];
 
 export const inventoryAlerts = [
-  { id: 'A-01', item: 'H-Beams', quantity: 3, threshold: 5, status: 'Critical' },
-  { id: 'A-02', item: 'Rebar', quantity: 8, threshold: 10, status: 'Low' }
+  { id: 'INV-1', item: 'HSS 8x8x1/2', quantity: 2, threshold: 5, status: 'Critical' },
+  { id: 'INV-2', item: 'PL 1/2x12', quantity: 6, threshold: 10, status: 'Low' },
 ];
 
 export const monthlyProductionData = [
-  { month: 'Jan', production: 240 },
-  { month: 'Feb', production: 260 },
-  { month: 'Mar', production: 300 },
-  { month: 'Apr', production: 280 },
-  { month: 'May', production: 320 }
+  { month: 'Jan', production: 1200 },
+  { month: 'Feb', production: 1340 },
+  { month: 'Mar', production: 1580 },
+  { month: 'Apr', production: 1500 },
 ];
 
 export const jobStatusDistribution = [
-  { name: 'Completed', value: 20 },
-  { name: 'In Progress', value: 10 },
-  { name: 'Pending', value: 5 }
+  { name: 'Completed', value: 5 },
+  { name: 'In Progress', value: 8 },
+  { name: 'Pending', value: 3 },
 ];
+
 

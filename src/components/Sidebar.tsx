@@ -1,70 +1,75 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboardIcon,
-  BriefcaseIcon,
-  PackageIcon,
-  UsersIcon,
-  ClockIcon,
-  BarChart3Icon,
-  FileTextIcon,
-  FilePlus2Icon,
-  MenuIcon
-} from 'lucide-react';
+  LayoutDashboard as DashboardIcon,
+  Briefcase as BriefcaseIcon,
+  Package as PackageIcon,
+  Users as UsersIcon,
+  Clock as ClockIcon,
+  BarChart3 as BarChart3Icon,
+  Upload as UploadIcon,
+  DollarSign as DollarSignIcon,
+  Calendar as CalendarIcon
+} from "lucide-react";
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: <LayoutDashboardIcon size={20} /> },
-    { path: '/jobs', label: 'Jobs', icon: <BriefcaseIcon size={20} /> },
-    { path: '/inventory', label: 'Inventory', icon: <PackageIcon size={20} /> },
-    { path: '/clients', label: 'Clients', icon: <UsersIcon size={20} /> },
-    { path: '/labor', label: 'Labor Hours', icon: <ClockIcon size={20} /> },
-    { path: '/reports', label: 'Reports', icon: <BarChart3Icon size={20} /> },
-    { path: '/import', label: 'Import Data', icon: <FilePlus2Icon size={20} /> },
-    { path: '/import-pdf', label: 'Import PDF', icon: <FileTextIcon size={20} /> }
+    { to: "/", label: "Dashboard", icon: <DashboardIcon size={18} /> },
+    { to: "/bids", label: "Estimating", icon: <DollarSignIcon size={18} /> },
+    { to: "/schedule", label: "Schedule", icon: <CalendarIcon size={18} /> },
+    { to: "/jobs", label: "Jobs", icon: <BriefcaseIcon size={18} /> },
+    { to: "/inventory", label: "Inventory", icon: <PackageIcon size={18} /> },
+    { to: "/clients", label: "Clients", icon: <UsersIcon size={18} /> },
+    { to: "/labor", label: "Labor", icon: <ClockIcon size={18} /> },
+    { to: "/reports", label: "Reports", icon: <BarChart3Icon size={18} /> },
+    { to: "/import", label: "Import Data", icon: <UploadIcon size={18} /> }
   ];
 
   return (
-    <aside className={`transition-all duration-500 ease-in-out border-r border-slate-700/50 bg-slate-900/50 backdrop-blur-xl ${collapsed ? 'w-20' : 'w-72'}`}>
-      <div className="flex items-center justify-between h-20 px-6 border-b border-slate-700/50">
+    <aside
+      className={`bg-black text-white h-screen flex flex-col border-r border-gray-800 ${collapsed ? "w-16" : "w-60"
+        } transition-all duration-200`}
+    >
+      <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
         {!collapsed && (
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center shadow-lg shadow-sky-500/20">
-              <PackageIcon size={18} className="text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              ForgeTrack
-            </span>
-          </div>
+          <span className="text-lg font-bold text-white tracking-wide">
+            ForgeTrack
+          </span>
         )}
         <button
+          className="text-gray-400 hover:text-white"
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-xl hover:bg-slate-800/80 text-slate-400 hover:text-white transition-all duration-200"
         >
-          <MenuIcon size={20} />
+          ☰
         </button>
       </div>
-      <nav className="p-4 space-y-1">
-        {navItems.map((item) => (
+
+      <nav className="flex-1 p-3 space-y-1 text-sm">
+        {navItems.map(item => (
           <NavLink
-            key={item.path}
-            to={item.path}
+            key={item.to}
+            to={item.to}
+            end={item.to === "/"}
             className={({ isActive }) =>
-              `nav-item ${isActive ? 'active' : ''} ${collapsed ? 'justify-center !px-0' : ''}`
+              `flex items-center rounded-md px-3 py-2 hover:bg-gray-800 ${isActive ? "bg-gray-900 text-white font-semibold" : "text-gray-300"
+              }`
             }
           >
-            <span className={`${collapsed ? '' : 'flex-shrink-0'}`}>{item.icon}</span>
-            {!collapsed && <span className="font-medium tracking-wide">{item.label}</span>}
+            <span className="mr-3">{item.icon}</span>
+            {!collapsed && <span>{item.label}</span>}
           </NavLink>
         ))}
       </nav>
     </aside>
   );
-};
+}
 
 export default Sidebar;
+
+
+
 
 
 

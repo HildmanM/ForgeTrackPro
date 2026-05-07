@@ -1,28 +1,24 @@
 import express from 'express';
 import cors from 'cors';
-import fileUpload from 'express-fileupload';
-import path from 'path';
+import uploadRoutes from './routes/upload.js';  // ✅ Ensure this exists
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
-// ✅ Allow Netlify frontend to connect
+// ✅ CORS Fix: Allow your frontend to connect
 app.use(cors({
-  origin: 'https://forgetrack.net',
-  credentials: true,
+  origin: 'https://forgetrack.net',  // ✅ Your live frontend domain
 }));
 
-app.use(express.json());
-app.use(fileUpload());
-app.use(express.static('public'));
+// ✅ Serve Uploaded Files (Optional)
+app.use('/uploads', express.static('./server/uploads'));
 
-// 📁 Your endpoints (example)
-app.post('/upload-excel', require('./utils/excelParser'));
-app.post('/upload-pdf', require('./utils/pdfParser'));
+// ✅ Add Upload Route
+app.use('/api', uploadRoutes);
 
-// 🔁 Default route
-app.get('/', (_req, res) => {
-  res.send('ForgeTrack backend running');
+// ✅ Default Route
+app.get('/', (req, res) => {
+  res.send('Forge Backend Running');
 });
 
 app.listen(PORT, () => {

@@ -1,107 +1,152 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { fetchClients } from "../../services/api";
 import {
   Users,
-  Building2,
   Phone,
   Mail,
-  MoreHorizontal,
-  Plus,
-  ArrowUpRight,
-  ShieldCheck
-} from 'lucide-react';
+  MapPin,
+  MoreVertical,
+  Star,
+  Activity,
+  Calendar
+} from "lucide-react";
 
-const clients = [
-  { id: 'C-001', name: 'Alpha Steel', contact: 'John Doe', phone: '555-1234', email: 'j.doe@alphasteel.com', status: 'Active' },
-  { id: 'C-002', name: 'Beta Fabrication', contact: 'Jane Smith', phone: '555-5678', email: 'jane@betafab.com', status: 'Active' },
-  { id: 'C-003', name: 'Gamma Works', contact: 'Alan Johnson', phone: '555-9012', email: 'alan.j@gamma.io', status: 'Inactive' },
-];
+// Mock Enhanced Client Data (merging with API data)
+const enhanceClientData = (apiClients: any[]) => {
+  return apiClients.map(c => ({
+    ...c,
+    status: "Active",
+    lastContact: "2 days ago",
+    totalProjects: Math.floor(Math.random() * 15) + 2,
+    value: Math.floor(Math.random() * 2000000) + 500000,
+    rating: Math.floor(Math.random() * 3) + 3
+  }));
+};
 
-const ClientsModule = () => {
+const ClientsModule: React.FC = () => {
+  const [rows, setRows] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchClients()
+      .then(data => setRows(enhanceClientData(data)))
+      .catch(console.error);
+  }, []);
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header */}
+      <div className="flex justify-between items-center border-b border-gray-800 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Partner Network</h1>
-          <p className="text-slate-400 mt-1">Manage client relationships and project stakeholders</p>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+            <Users className="text-blue-500" />
+            Client Relationship Management
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">Manage partner details, contracts, and communication</p>
         </div>
-        <button className="premium-button flex items-center space-x-2">
-          <Plus size={18} />
-          <span>Add Client</span>
-        </button>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Search clients..."
+            className="bg-gray-800 border-gray-700 text-sm text-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 w-64"
+          />
+          <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            Add Client
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clients.map((client) => (
-          <div key={client.id} className="stat-card group relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4">
-              <button className="text-slate-500 hover:text-white transition-colors">
-                <MoreHorizontal size={20} />
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-sky-500/20 to-sky-500/5 rounded-2xl flex items-center justify-center text-sky-400 border border-sky-500/20 shadow-lg">
-                <Building2 size={28} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white group-hover:text-sky-400 transition-colors uppercase tracking-tight">
-                  {client.name}
-                </h3>
-                <div className="flex items-center space-x-1.5 mt-0.5">
-                  <span className={`w-1.5 h-1.5 rounded-full ${client.status === 'Active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-500'}`} />
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{client.status}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Client List */}
+        <div className="lg:col-span-2 space-y-4">
+          {rows.map((client, i) => (
+            <div key={i} className="bg-gray-800 rounded-xl border border-gray-700 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-700/50 transition-colors group">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                  {client.name.substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    {client.name}
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${client.status === 'Active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-400 border-gray-500/20'}`}>
+                      {client.status}
+                    </span>
+                  </h3>
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-400 mt-1">
+                    <span className="flex items-center gap-1"><Mail size={14} /> {client.email}</span>
+                    <span className="flex items-center gap-1"><Phone size={14} /> {client.phone}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
+              <div className="flex items-center gap-6 mt-4 sm:mt-0">
+                <div className="text-right">
+                  <div className="text-xs text-gray-400">Total Value</div>
+                  <div className="font-semibold text-white">${client.value?.toLocaleString()}</div>
+                </div>
+                <button className="p-2 hover:bg-gray-600 rounded-lg text-gray-400 transition-colors">
+                  <MoreVertical size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+          {!rows.length && (
+            <div className="text-center py-10 text-gray-500">
+              No clients found.
+            </div>
+          )}
+        </div>
+
+        {/* CRM Stats / Details Sidebar */}
+        <div className="space-y-6">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <h3 className="font-semibold text-white mb-4">Pipeline Summary</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl border border-slate-800/50">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
-                    <Users size={14} />
-                  </div>
-                  <div className="text-xs">
-                    <p className="text-slate-500 font-medium">Main Contact</p>
-                    <p className="text-white font-bold">{client.contact}</p>
-                  </div>
-                </div>
-                <ArrowUpRight size={14} className="text-slate-600 group-hover:text-sky-400 transition-colors" />
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Active Contracts</span>
+                <span className="text-white font-medium">24</span>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex flex-col items-center justify-center space-y-1 hover:bg-slate-800/50 transition-colors cursor-pointer group/btn">
-                  <Phone size={14} className="text-slate-500 group-hover/btn:text-sky-400 transition-colors" />
-                  <span className="text-[10px] font-bold text-slate-400">CALL</span>
-                </div>
-                <div className="p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex flex-col items-center justify-center space-y-1 hover:bg-slate-800/50 transition-colors cursor-pointer group/btn">
-                  <Mail size={14} className="text-slate-500 group-hover/btn:text-sky-400 transition-colors" />
-                  <span className="text-[10px] font-bold text-slate-400">EMAIL</span>
-                </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Pending Bids</span>
+                <span className="text-white font-medium">8</span>
               </div>
-
-              <div className="pt-2 flex items-center justify-between text-[10px] font-bold text-slate-500">
-                <div className="flex items-center space-x-1 uppercase">
-                  <ShieldCheck size={12} className="text-emerald-500/70" />
-                  <span>Verified Partner</span>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Total Revenue YTD</span>
+                <span className="text-emerald-400 font-medium">$12.5M</span>
+              </div>
+              <div className="pt-4 border-t border-gray-700">
+                <div className="flex items-center gap-2 text-sm text-blue-400 cursor-pointer hover:underline">
+                  <Activity size={14} /> View detailed reports
                 </div>
-                <span>ID: {client.id}</span>
               </div>
             </div>
           </div>
-        ))}
 
-        <button className="glass-panel p-6 border-dashed border-2 border-slate-700/50 hover:border-sky-500/50 hover:bg-sky-500/5 transition-all duration-300 flex flex-col items-center justify-center text-center space-y-3 group/add">
-          <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 group-hover/add:bg-sky-500 group-hover/add:text-white transition-all shadow-xl">
-            <Plus size={24} />
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <h3 className="font-semibold text-white mb-4">Recent Interactions</h3>
+            <div className="space-y-4">
+              {[1, 2, 3].map((_, i) => (
+                <div key={i} className="flex gap-3">
+                  <div className="mt-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-300">Call with <span className="text-white font-medium">MegaCorp Builders</span> regarding expansion.</p>
+                    <span className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                      <Calendar size={10} /> 2 days ago
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="w-full mt-4 py-2 text-sm text-center border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+              View All Activity
+            </button>
           </div>
-          <div className="space-y-1">
-            <h4 className="text-sm font-bold text-white uppercase tracking-tight">Register New</h4>
-            <p className="text-xs text-slate-500 font-medium">Add a stakeholder to the ForgeTrack ecosystem</p>
-          </div>
-        </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default ClientsModule;
+
